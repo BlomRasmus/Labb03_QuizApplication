@@ -1,0 +1,75 @@
+﻿<Window x:Class="Labb03_QuizApplication.Dialogs.PackOptionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb03_QuizApplication.Dialogs"
+        mc:Ignorable="d" DataContext="ConfigurationViewModel"
+        Title="PackOptionsDialog" Height="300" Width="250">
+    <Grid>
+        <StackPanel
+            Margin="10 10 10 10"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            DataContext="{Binding ConfigurationViewModel}">
+
+            <Label x:Name="PackOptionsLabel"
+                   Content="Name:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Width="200"/>
+            <TextBox Text="{Binding ActivePack.Name, UpdateSourceTrigger=PropertyChanged}"
+                     Width="{Binding ElementName=PackOptionsLabel}"
+                     Height="30"/>
+
+            <Label Content="Difficulty:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Margin="0 10 0 0"/>
+
+            <ComboBox
+                SelectedIndex="{Binding ActivePack.Difficulty, Mode=TwoWay}"
+                SelectedItem="{Binding ActivePack.Difficulty, Mode=TwoWay}">
+                <ComboBoxItem Content="Easy"/>
+                <ComboBoxItem Content="Medium"/>
+                <ComboBoxItem Content="Hard"/>
+            </ComboBox>
+
+            <StackPanel
+                Orientation="Horizontal"
+                Margin="0 10 0 0"
+                Width="{Binding ElementName=PackOptionsLabel}">
+               
+                <Label Content="Timelimit:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       HorizontalAlignment="Left"/>
+                <Label Content="{Binding Value, ElementName=TimelimitSlider}"
+                       FontSize="15"
+                       HorizontalAlignment="Right"
+                       />
+                <Label Content="Seconds"
+                       FontSize="15"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom"
+                       />
+
+            </StackPanel>
+
+            <Slider x:Name="TimelimitSlider"
+                    Width="{Binding ElementName=PackOptionsLabel}"
+                    Height="30"
+                    VerticalAlignment="Center"
+                    Margin="5 0 0 0"
+                    Maximum="50"
+                    TickPlacement="BottomRight"
+                    TickFrequency="1"
+                    IsSnapToTickEnabled="True"
+                    Value="{Binding ActivePack.TimeLimitInSeconds}"/>
+
+
+        </StackPanel>
+    </Grid>
+</Window>
