@@ -7,7 +7,12 @@
              DataContext="{Binding PlayerViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="420" d:DesignWidth="800">
-    <Grid>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="PlayerVis"/>
+    </UserControl.Resources>
+    
+    <Grid
+        Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="165"/>
             <RowDefinition Height="*"/>

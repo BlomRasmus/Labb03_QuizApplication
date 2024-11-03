@@ -23,6 +23,9 @@ namespace Labb03_QuizApplication.ViewModel
 
         public DelegateCommand AddQuestionPackCommand { get; }
         public DelegateCommand SetActivePackCommand { get; }
+		public DelegateCommand SetPlayerVisCommand { get; }
+        public DelegateCommand SetConfigVisCommand { get; }
+
 
 
         private QuestionPackViewModel _newQuestionPack;
@@ -59,6 +62,8 @@ namespace Labb03_QuizApplication.ViewModel
 
 			AddQuestionPackCommand = new DelegateCommand(AddQuestionPack);
             SetActivePackCommand = new DelegateCommand(SetActivePack);
+			SetPlayerVisCommand = new DelegateCommand(SetPlayerVis);
+			SetConfigVisCommand = new DelegateCommand(SetConfigVis);
         }
 
         public void AddQuestionPack(object parameter)
@@ -75,6 +80,16 @@ namespace Labb03_QuizApplication.ViewModel
 			RaisePropertyChanged();
 		}
 
+		public void SetPlayerVis(object paramenter)
+		{
+			PlayerViewModel.IsPlayerVisible = true;
+			ConfigurationViewModel.IsConfigVisible = false;
+        }
+        public void SetConfigVis(object paramenter)
+        {
+            PlayerViewModel.IsPlayerVisible = false;
+            ConfigurationViewModel.IsConfigVisible = true;
+        }
 
     }
 }

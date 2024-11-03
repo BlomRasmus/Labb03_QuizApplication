@@ -24,6 +24,19 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
+        private bool _isPlayerVisible;
+
+        public bool IsPlayerVisible
+        {
+            get { return _isPlayerVisible; }
+            set 
+            {
+                _isPlayerVisible = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
         public DelegateCommand UpdateButtonCommand { get; }
 
         private readonly MainWindowViewModel? mainWindowViewModel;
@@ -31,6 +44,7 @@ namespace Labb03_QuizApplication.ViewModel
         public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
+            IsPlayerVisible = false;
 
             Timer = "Start value";
 
@@ -57,5 +71,6 @@ namespace Labb03_QuizApplication.ViewModel
         {
             Timer += "x";
         }
+
     }
 }

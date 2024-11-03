@@ -24,20 +24,20 @@
                 <MenuItem Header="_Select Question Pack" 
                           Icon="{fa:Icon FolderOpen}"
                           ItemsSource="{Binding Packs}"
+                          Command="{Binding ActivePack}"
                           >
-                    <MenuItem.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel HorizontalAlignment="Left"
-                                            >
-                                    <TextBlock Text="{Binding Name}"
-                                            HorizontalAlignment="Left"
-                                            FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Difficulty}"
-                                                HorizontalAlignment="Right"
-                                                Margin="10 0 0 0"/>
-                                </DockPanel>
-                        </DataTemplate>
-                    </MenuItem.ItemTemplate>
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name}"/>
+                            <Setter Property="Command" 
+                                    Value="{Binding DataContext.ActivePack, 
+                                    RelativeSource={RelativeSource 
+                                    AncestorType={x:Type MenuItem}}}"
+                                    />
+                            <Setter Property="CommandParameter" Value="{Binding}"/>
+
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <MenuItem Header="_Delete Question Pack" 
                           Icon="{fa:Icon FolderMinus}"
@@ -50,18 +50,23 @@
 
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Add Question"
-                          Icon="{fa:Icon Plus}"/>
+                          Icon="{fa:Icon Plus}"
+                          Command="{Binding ConfigurationViewModel.AddItemCommand}"/>
                 <MenuItem Header="_Remove Question" 
-                          Icon="{fa:Icon Minus}"/>
+                          Icon="{fa:Icon Minus}"
+                          Command="{Binding ConfigurationViewModel.RemoveItemCommand}"/>
                 <MenuItem Header="_Pack Options" 
-                          Icon="{fa:Icon ScrewdriverWrench}"/>
+                          Icon="{fa:Icon ScrewdriverWrench}"
+                          Command="{Binding ConfigurationViewModel.ShowDialogCommand}"/>
             </MenuItem>
 
             <MenuItem Header="_Views">
                 <MenuItem Header="_Play"
-                          Icon="{fa:Icon CirclePlay}"/>
+                          Icon="{fa:Icon CirclePlay}"
+                          Command="{Binding SetPlayerVisCommand}"/>
                 <MenuItem Header="_Edit" 
-                          Icon="{fa:Icon Gears}"/>
+                          Icon="{fa:Icon Gears}"
+                          Command="{Binding SetConfigVisCommand}"/>
                 <Separator/>
                 <MenuItem Header="_Fullscreen" 
                           Icon="{fa:Icon Expand}"/>
@@ -102,3 +107,14 @@
                 HorizontalAlignment="Left"
                 Width="60"
                 BorderBrush="LightGray"/>-->
+
+                            <!--<DockPanel HorizontalAlignment="Left"
+                                       >
+                                    <TextBlock Text="{Binding Name}"
+                                            HorizontalAlignment="Left"
+                                            FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Difficulty}"
+                                                HorizontalAlignment="Right"
+                                                Margin="10 0 0 0"/>
+                                </DockPanel>
+                        </DataTemplate>-->

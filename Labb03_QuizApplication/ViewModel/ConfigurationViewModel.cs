@@ -27,6 +27,19 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
+        private bool _isConfigVisible;
+
+        public bool IsConfigVisible
+        {
+            get { return _isConfigVisible; }
+            set 
+            {
+                _isConfigVisible = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
         private bool _visibility;
 
         public bool Visibility
@@ -41,7 +54,7 @@ namespace Labb03_QuizApplication.ViewModel
 
 
 
-        public DelegateCommand AddItemCommand => new DelegateCommand(Add => AddItem(this));
+        public DelegateCommand AddItemCommand { get; }
 
         //TODO: FIxa så att den avaktiverar knappen
         public DelegateCommand RemoveItemCommand { get; }
@@ -56,8 +69,10 @@ namespace Labb03_QuizApplication.ViewModel
         public ConfigurationViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
-            //AddItemCommand = new DelegateCommand(AddItem);
             RemoveItemCommand = new DelegateCommand(RemoveItem, canExecute => SelectedQuestion != null);
+            AddItemCommand = new DelegateCommand(AddItem, canExecute => IsConfigVisible == true);
+            IsConfigVisible = true;
+            //AddItemCommand = new DelegateCommand(AddItem);
             //SelectedQuestion = new Question("", "", "", "", "");
             //SelectedQuestion = mainWindowViewModel.ActivePack.Questions.FirstOrDefault();
         }

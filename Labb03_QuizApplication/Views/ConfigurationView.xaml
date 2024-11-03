@@ -13,7 +13,8 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
     <Grid x:Name="ConfigGrid"
-        Background="White">
+        Background="White"
+          Visibility="{Binding IsConfigVisible, Converter={StaticResource BoolToVis}}">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition 
