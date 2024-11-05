@@ -29,5 +29,10 @@ namespace Labb03_QuizApplication.Dialogs
         {
             Close();
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

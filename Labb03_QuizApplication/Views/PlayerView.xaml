@@ -20,13 +20,21 @@
             <RowDefinition Height="75"/>
         </Grid.RowDefinitions>
 
+        <Label Grid.Row="0"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Right"
+               Margin="10 0 20 0"
+               FontSize="40"
+               Content="{Binding TimeLeft}"/>
+
         <StackPanel
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center">
 
+
             <Label 
                 FontSize="30"
-                Content="Question1"
+                Content="{Binding ActiveQuestion.Query}"
                 HorizontalContentAlignment="Center"
                 />
 
@@ -34,7 +42,7 @@
                 Width="200"
                 Height="50" 
                 HorizontalContentAlignment="Center"
-                Content="Question 1"/>
+                Content="{Binding Message}"/>
         </StackPanel>
 
         <StackPanel
@@ -45,13 +53,18 @@
 
             <Button 
                 Margin="10"
-                Content="answer1"
+                Content="{Binding RandomizedAnswers[0]}"
+                Command="{Binding CheckAnswerCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"
                 Height="75"
                 Width="150"/>
 
             <Button 
                 Margin="10"
-                Content="answer2"
+                Content="{Binding RandomizedAnswers[1]}"
+                Command="{Binding CheckAnswerCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"
+                
                 Height="75"
                 Width="150"/>
 
@@ -65,13 +78,19 @@
 
             <Button 
                 Margin="10"
-                Content="answer3"
+                Content="{Binding RandomizedAnswers[2]}"
+                Command="{Binding CheckAnswerCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"
+                
                 Height="75"
                 Width="150"/>
 
             <Button 
                 Margin="10"
-                Content="answer4"
+                Content="{Binding RandomizedAnswers[3]}"
+                Command="{Binding CheckAnswerCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Content}"
+                
                 Height="75"
                 Width="150"/>
 

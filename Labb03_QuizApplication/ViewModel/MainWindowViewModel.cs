@@ -22,9 +22,12 @@ namespace Labb03_QuizApplication.ViewModel
 
 
         public DelegateCommand AddQuestionPackCommand { get; }
-        public DelegateCommand SetActivePackCommand { get; }
+        public DelegateCommand SetNewActivePackCommand { get; }
 		public DelegateCommand SetPlayerVisCommand { get; }
         public DelegateCommand SetConfigVisCommand { get; }
+		public DelegateCommand SetActivePackCommand { get; }
+		public DelegateCommand DeleteQuestionPackCommand { get; }
+		public DelegateCommand EditNewQuestionPackCommand { get; }
 
 
 
@@ -53,43 +56,59 @@ namespace Labb03_QuizApplication.ViewModel
 
         public MainWindowViewModel()
         {
-			ConfigurationViewModel = new ConfigurationViewModel(this);
-			PlayerViewModel = new PlayerViewModel(this);
 			Packs = new();
+			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
+			PlayerViewModel = new PlayerViewModel(this);
 			Packs.Add(ActivePack);
 			//Använd activePack för att binda allt till, programmet kommer enbart använda den aktiva questionPack, och den kommer uppdateras beroende på vilken som används
 
 			AddQuestionPackCommand = new DelegateCommand(AddQuestionPack);
-            SetActivePackCommand = new DelegateCommand(SetActivePack);
-			SetPlayerVisCommand = new DelegateCommand(SetPlayerVis);
-			SetConfigVisCommand = new DelegateCommand(SetConfigVis);
+			SetConfigVisCommand = new DelegateCommand(SetConfigVis, canChange => ConfigurationViewModel.IsConfigVisible != true);
+			SetPlayerVisCommand = new DelegateCommand(SetPlayerVis, canChange => ActivePack.Questions.Any() && PlayerViewModel.IsPlayerVisible != true);
+			SetActivePackCommand = new DelegateCommand(SetActivePack);
+			DeleteQuestionPackCommand = new DelegateCommand(DeleteQuestionPack, IsNotEmpty => Packs.Count > 1);
+			EditNewQuestionPackCommand = new DelegateCommand(EditNewQuestionPack);
         }
 
+
+		public void EditNewQuestionPack(object parameter)
+		{
+            QuestionPack questionPack = new QuestionPack("My Question Pack");
+            NewQuestionPack = new QuestionPackViewModel(questionPack);
+            AddPackDialog.ShowCreatePackModelDialog();
+        }
         public void AddQuestionPack(object parameter)
 		{
-			QuestionPack questionPack = new QuestionPack("My Question Pack");
-			NewQuestionPack = new QuestionPackViewModel(questionPack);
 			Packs.Add(NewQuestionPack);
-			AddPackDialog.ShowCreatePackModelDialog();
-			RaisePropertyChanged();
+			DeleteQuestionPackCommand.RaiseCanExecuteChanged();
+            ActivePack = NewQuestionPack;
+            RaisePropertyChanged();
 		}
-		public void SetActivePack(object parameter)
+		public void DeleteQuestionPack(object parameter)
 		{
-			ActivePack = NewQuestionPack;
-			RaisePropertyChanged();
+			Packs.Remove(ActivePack);
+			RaisePropertyChanged("Packs");
+            DeleteQuestionPackCommand.RaiseCanExecuteChanged();
+            ActivePack = Packs.FirstOrDefault();
 		}
 
-		public void SetPlayerVis(object paramenter)
+		public void SetPlayerVis(object parameter)
 		{
 			PlayerViewModel.IsPlayerVisible = true;
 			ConfigurationViewModel.IsConfigVisible = false;
+            SetConfigVisCommand.RaiseCanExecuteChanged();
+            SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
-        public void SetConfigVis(object paramenter)
+        public void SetConfigVis(object parameter)
         {
             PlayerViewModel.IsPlayerVisible = false;
             ConfigurationViewModel.IsConfigVisible = true;
+            SetConfigVisCommand.RaiseCanExecuteChanged();
+            SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
+
+		public void SetActivePack(object obj) => ActivePack = obj as QuestionPackViewModel;
 
     }
 }

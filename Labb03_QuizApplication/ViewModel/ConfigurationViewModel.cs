@@ -48,6 +48,7 @@ namespace Labb03_QuizApplication.ViewModel
             set 
             {
                 _visibility = value;
+                AddItemCommand.RaiseCanExecuteChanged();
                 RaisePropertyChanged();
             }
         }
@@ -62,7 +63,7 @@ namespace Labb03_QuizApplication.ViewModel
         public DelegateCommand ShowDialogCommand => new DelegateCommand(myDialog => ShowDialog());
 
 
-        public QuestionPackViewModel? ActivePack { get => mainWindowViewModel.ActivePack; }
+        public QuestionPackViewModel? ActivePack { get => mainWindowViewModel?.ActivePack; }
 
         private readonly MainWindowViewModel? mainWindowViewModel;
 
@@ -70,8 +71,8 @@ namespace Labb03_QuizApplication.ViewModel
         {
             this.mainWindowViewModel = mainWindowViewModel;
             RemoveItemCommand = new DelegateCommand(RemoveItem, canExecute => SelectedQuestion != null);
-            AddItemCommand = new DelegateCommand(AddItem, canExecute => IsConfigVisible == true);
             IsConfigVisible = true;
+            AddItemCommand = new DelegateCommand(AddItem);
             //AddItemCommand = new DelegateCommand(AddItem);
             //SelectedQuestion = new Question("", "", "", "", "");
             //SelectedQuestion = mainWindowViewModel.ActivePack.Questions.FirstOrDefault();
@@ -84,11 +85,14 @@ namespace Labb03_QuizApplication.ViewModel
             ActivePack.Questions.Add(question);
             SelectedQuestion = question;
             RaisePropertyChanged("ActivePack");
+            mainWindowViewModel.SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
         public void RemoveItem(object parameter)
         {
             ActivePack.Questions.Remove(SelectedQuestion);
             RaisePropertyChanged("ActivePack");
+
+            if(ActivePack.Questions.Any()) mainWindowViewModel.SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
 
         public void ShowDialog()
