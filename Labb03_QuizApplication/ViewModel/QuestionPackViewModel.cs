@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Labb03_QuizApplication.ViewModel
@@ -20,6 +21,13 @@ namespace Labb03_QuizApplication.ViewModel
         {
             this.model = Model;
             this.Questions = new ObservableCollection<Question>(model.Questions);
+        }
+
+        [JsonConstructor]
+        public QuestionPackViewModel()
+        {
+            model = new QuestionPack() { Questions = new List<Question>() };
+            Questions = new ObservableCollection<Question>(model.Questions);
         }
 
         public ObservableCollection<Question> Questions { get; }

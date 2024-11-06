@@ -48,6 +48,7 @@
                 <Separator />
                 <MenuItem Header="E_xit"
                           Icon="{fa:Icon ArrowRightFromBracket}"
+                          Command="{Binding ExitWindowCommand}"
                           />
             </MenuItem>
 

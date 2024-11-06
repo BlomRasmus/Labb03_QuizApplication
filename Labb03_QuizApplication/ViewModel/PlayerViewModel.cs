@@ -15,6 +15,49 @@ namespace Labb03_QuizApplication.ViewModel
     class PlayerViewModel : ViewModelBase
     {
         private int currentQuestionIndex;
+        private int correctAnswers = 0;
+
+
+
+        private bool _makeWayForEndMessage;
+
+        public bool MakeWayForEndMessage
+        {
+            get { return _makeWayForEndMessage; }
+            set 
+            {
+                _makeWayForEndMessage = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private bool _isEndOfQuiz;
+
+        public bool IsEndOfQuiz
+        {
+            get { return _isEndOfQuiz; }
+            set 
+            {
+                _isEndOfQuiz = value;
+                MakeWayForEndMessage = !IsEndOfQuiz;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private string _endMessage;
+
+        public string EndMessage
+        {
+            get { return _endMessage; }
+            set 
+            {
+                _endMessage = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         private string myVar;
 
@@ -100,7 +143,7 @@ namespace Labb03_QuizApplication.ViewModel
 
                 if (value == true)
                 {
-                    StartPlayerView();
+                    StartPlayerView(null);
                 }
 
             }
@@ -109,19 +152,23 @@ namespace Labb03_QuizApplication.ViewModel
 
         public DelegateCommand UpdateButtonCommand { get; }
         public DelegateCommand CheckAnswerCommand { get; }
+        public DelegateCommand StartPlayerViewCommand { get; }
+
+
 
         private readonly MainWindowViewModel? mainWindowViewModel;
-        public QuestionPackViewModel? ActivePack { get; }
+        public QuestionPackViewModel? ActivePack { get => mainWindowViewModel.ActivePack; }
 
         public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
-            ActivePack = mainWindowViewModel?.ActivePack;
             currentQuestionIndex = 0;
 
 
             IsPlayerVisible = false;
+            IsEndOfQuiz = false;
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
+            StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
 
             Timer = new DispatcherTimer();
             Timer.Interval = TimeSpan.FromSeconds(1);
@@ -131,8 +178,10 @@ namespace Labb03_QuizApplication.ViewModel
         }
 
 
-        public void StartPlayerView()
+        public void StartPlayerView(object? obj)
         {
+            IsEndOfQuiz = false;
+            correctAnswers = 0;
             currentQuestionIndex = 0;
             RandomizedQuestions = ActivePack.Questions;
             RandomizedQuestions.Shuffle();
@@ -146,7 +195,7 @@ namespace Labb03_QuizApplication.ViewModel
             RandomizedAnswers.Add(currentQuestion.CorrectAnswer);
             RandomizedAnswers.Shuffle();
         }
-        private void Timer_Tick(object? sender, EventArgs e)
+        private async void Timer_Tick(object? sender, EventArgs e)
         {
             TimeLeft--;
 
@@ -161,17 +210,18 @@ namespace Labb03_QuizApplication.ViewModel
         {
             TimeLeft = ActivePack.TimeLimitInSeconds;
             Timer.Start();
+            Message = $"Question {currentQuestionIndex + 1} of {RandomizedQuestions.Count}";
         }
 
         public void CheckAnswer(object? buttonAnswer)
         {
             if(buttonAnswer == ActiveQuestion.CorrectAnswer)
             {
-                Message = "Grattis, du vann";
+                correctAnswers++;
             }
             else
             {
-                Message = "BUUUUU";
+
             }
 
             SetNewQuestion();
@@ -190,6 +240,8 @@ namespace Labb03_QuizApplication.ViewModel
             else
             {
                 //TODO: Skriv antal frågor rätt fel
+                EndMessage = $"You got {correctAnswers} right out of {RandomizedQuestions.Count}";
+                IsEndOfQuiz = true;
             }
         }
 

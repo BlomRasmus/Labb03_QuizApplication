@@ -5,15 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Shapes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace Labb03_QuizApplication.ViewModel
 {
     class MainWindowViewModel : ViewModelBase
     {
-		DialogService AddPackDialog = new DialogService();
+		private readonly string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\packs.json";
+
+        DialogService AddPackDialog = new DialogService();
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
 
         public PlayerViewModel PlayerViewModel { get; }
@@ -28,6 +35,7 @@ namespace Labb03_QuizApplication.ViewModel
 		public DelegateCommand SetActivePackCommand { get; }
 		public DelegateCommand DeleteQuestionPackCommand { get; }
 		public DelegateCommand EditNewQuestionPackCommand { get; }
+		public DelegateCommand ExitWindowCommand { get; }
 
 
 
@@ -60,7 +68,7 @@ namespace Labb03_QuizApplication.ViewModel
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
-			Packs.Add(ActivePack);
+			ReadFile();
 			//Använd activePack för att binda allt till, programmet kommer enbart använda den aktiva questionPack, och den kommer uppdateras beroende på vilken som används
 
 			AddQuestionPackCommand = new DelegateCommand(AddQuestionPack);
@@ -69,9 +77,35 @@ namespace Labb03_QuizApplication.ViewModel
 			SetActivePackCommand = new DelegateCommand(SetActivePack);
 			DeleteQuestionPackCommand = new DelegateCommand(DeleteQuestionPack, IsNotEmpty => Packs.Count > 1);
 			EditNewQuestionPackCommand = new DelegateCommand(EditNewQuestionPack);
+			ExitWindowCommand = new DelegateCommand(ExitWindow);
         }
 
+		public async Task WriteFile()
+		{
+			try
+			{
+				var myPacks = JsonSerializer.Serialize(Packs);
+				await File.WriteAllTextAsync(path, myPacks);
+			}
+			catch
+			{
+				throw new FileLoadException("Cant save");
+			}
+        }
 
+		public async Task ReadFile()
+		{
+			try
+			{
+				var myPacks = await File.ReadAllTextAsync(path);
+				Packs = JsonSerializer.Deserialize<ObservableCollection<QuestionPackViewModel>>(myPacks);
+                ActivePack = Packs[0];
+			}
+			catch
+			{
+                Packs.Add(ActivePack);
+            }
+		}
 		public void EditNewQuestionPack(object parameter)
 		{
             QuestionPack questionPack = new QuestionPack("My Question Pack");
@@ -100,13 +134,18 @@ namespace Labb03_QuizApplication.ViewModel
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
-        public void SetConfigVis(object parameter)
+        public async void SetConfigVis(object parameter)
         {
             PlayerViewModel.IsPlayerVisible = false;
             ConfigurationViewModel.IsConfigVisible = true;
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
+		public void ExitWindow(object? obj)
+		{
+			WriteFile();
+			Application.Current.Shutdown();
+		}
 
 		public void SetActivePack(object obj) => ActivePack = obj as QuestionPackViewModel;
 

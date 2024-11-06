@@ -9,7 +9,7 @@
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800"
-        MinHeight="500" MinWidth="800">
+        MinHeight="500" MinWidth="800" WindowStyle="None">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
