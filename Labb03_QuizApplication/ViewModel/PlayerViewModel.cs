@@ -16,8 +16,7 @@ namespace Labb03_QuizApplication.ViewModel
     {
         private int currentQuestionIndex;
         private int correctAnswers = 0;
-
-
+        //private string[] AnswerColors = new string[4] { "gray", "gray", "gray", "gray" };
 
         private bool _makeWayForEndMessage;
 
@@ -81,6 +80,15 @@ namespace Labb03_QuizApplication.ViewModel
                 RaisePropertyChanged();
             }
         }
+
+        private ObservableCollection<string> _answerColors;
+
+        public ObservableCollection<string> AnswerColors
+        {
+            get { return _answerColors; }
+            set { _answerColors = value; RaisePropertyChanged(); }
+        }
+
 
         private int _timeLeft;
 
@@ -167,13 +175,14 @@ namespace Labb03_QuizApplication.ViewModel
 
             IsPlayerVisible = false;
             IsEndOfQuiz = false;
+            AnswerColors = new ObservableCollection<string> { "White", "White", "White", "White", };
+
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
             StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
 
             Timer = new DispatcherTimer();
             Timer.Interval = TimeSpan.FromSeconds(1);
             Timer.Tick += Timer_Tick;
-            //timer.Start();
 
         }
 
@@ -213,15 +222,19 @@ namespace Labb03_QuizApplication.ViewModel
             Message = $"Question {currentQuestionIndex + 1} of {RandomizedQuestions.Count}";
         }
 
-        public void CheckAnswer(object? buttonAnswer)
+        public async void CheckAnswer(object? buttonAnswer)
         {
-            if(buttonAnswer == ActiveQuestion.CorrectAnswer)
+            int indexOfAnswer = Int32.Parse((string)buttonAnswer);
+            int indexOfCorrectAnswer = RandomizedAnswers.IndexOf(ActiveQuestion.CorrectAnswer);
+
+            if (RandomizedAnswers[indexOfAnswer] == RandomizedAnswers[indexOfCorrectAnswer])
             {
                 correctAnswers++;
+                await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, true);
             }
             else
             {
-
+                await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, false);
             }
 
             SetNewQuestion();
@@ -239,10 +252,29 @@ namespace Labb03_QuizApplication.ViewModel
             }
             else
             {
-                //TODO: Skriv antal frågor rätt fel
                 EndMessage = $"You got {correctAnswers} right out of {RandomizedQuestions.Count}";
                 IsEndOfQuiz = true;
             }
+        }
+
+        public async Task SetAnswersColor(int correctAnswerIndex, int answerIndex, bool isEquals)
+        {
+            if(isEquals == true)
+            {
+                AnswerColors[correctAnswerIndex] = "Green";
+                await Task.Delay(2000);
+                AnswerColors[correctAnswerIndex] = "White";
+            }
+            else 
+            {
+                AnswerColors[correctAnswerIndex] = "Green";
+                AnswerColors[answerIndex] = "Red";
+                await Task.Delay(2000);
+                AnswerColors[correctAnswerIndex] = "White";
+                AnswerColors[answerIndex] = "White";
+
+            }
+
         }
 
     }

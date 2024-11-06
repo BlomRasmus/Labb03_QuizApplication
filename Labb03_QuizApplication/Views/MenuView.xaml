@@ -47,6 +47,7 @@
                           />
                 <Separator />
                 <MenuItem Header="E_xit"
+                          InputGestureText="Alt + F4"
                           Icon="{fa:Icon ArrowRightFromBracket}"
                           Command="{Binding ExitWindowCommand}"
                           />
@@ -54,14 +55,17 @@
 
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Add Question"
+                          InputGestureText="Insert"
                           Icon="{fa:Icon Plus}"
                           Command="{Binding ConfigurationViewModel.AddItemCommand}"
                           IsEnabled="{Binding ConfigurationViewModel.IsConfigVisible}"/>
                 <MenuItem Header="_Remove Question" 
+                          InputGestureText="Delete"
                           Icon="{fa:Icon Minus}"
                           Command="{Binding ConfigurationViewModel.RemoveItemCommand}"
                           IsEnabled="{Binding ConfigurationViewModel.IsConfigVisible}"/>
                 <MenuItem Header="_Pack Options" 
+                          InputGestureText="Ctrl + O"
                           Icon="{fa:Icon ScrewdriverWrench}"
                           Command="{Binding ConfigurationViewModel.ShowDialogCommand}"
                           IsEnabled="{Binding ConfigurationViewModel.IsConfigVisible}"/>
@@ -69,9 +73,13 @@
 
             <MenuItem Header="_Views">
                 <MenuItem Header="_Play"
+                          InputGestureText="Ctrl + P"
+                          
                           Icon="{fa:Icon CirclePlay}"
                           Command="{Binding SetPlayerVisCommand}"/>
                 <MenuItem Header="_Edit" 
+                          InputGestureText="Ctrl + E"
+                          
                           Icon="{fa:Icon Gears}"
                           Command="{Binding SetConfigVisCommand}"/>
                 <Separator/>

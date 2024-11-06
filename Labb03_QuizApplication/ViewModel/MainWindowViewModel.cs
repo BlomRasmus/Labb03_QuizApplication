@@ -18,6 +18,7 @@ namespace Labb03_QuizApplication.ViewModel
 {
     class MainWindowViewModel : ViewModelBase
     {
+		//TODO: Lägg i Egen klass
 		private readonly string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\packs.json";
 
         DialogService AddPackDialog = new DialogService();
@@ -80,6 +81,8 @@ namespace Labb03_QuizApplication.ViewModel
 			ExitWindowCommand = new DelegateCommand(ExitWindow);
         }
 
+
+		//TODO: Lägg i en egen klass i model
 		public async Task WriteFile()
 		{
 			try
@@ -93,6 +96,8 @@ namespace Labb03_QuizApplication.ViewModel
 			}
         }
 
+
+		//TODO: Lägg också i egen klass
 		public async Task ReadFile()
 		{
 			try

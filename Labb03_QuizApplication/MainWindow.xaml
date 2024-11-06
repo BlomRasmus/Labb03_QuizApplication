@@ -16,8 +16,14 @@
     </Window.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Key="U" Modifiers="Ctrl" Command="{Binding PlayerViewModel.UpdateButtonCommand}"/>
+        <KeyBinding Key="Insert" Command="{Binding ConfigurationViewModel.AddItemCommand}"/>
+        <KeyBinding Key="Delete" Command="{Binding ConfigurationViewModel.RemoveItemCommand}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding ConfigurationViewModel.ShowDialogCommand}"/>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding SetPlayerVisCommand}"/>
+        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding SetConfigVisCommand}"/>
+        <KeyBinding Key="F4" Modifiers="Alt" Command="{Binding ExitWindowCommand}"/>
     </Window.InputBindings>
+    
     <Grid
         MinHeight="500"
         MinWidth="800">
