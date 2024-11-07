@@ -39,7 +39,6 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
-
         private bool _visibility;
 
         public bool Visibility
@@ -57,7 +56,6 @@ namespace Labb03_QuizApplication.ViewModel
 
         public DelegateCommand AddItemCommand { get; }
 
-        //TODO: FIxa så att den avaktiverar knappen
         public DelegateCommand RemoveItemCommand { get; }
 
         public DelegateCommand ShowDialogCommand => new DelegateCommand(myDialog => ShowDialog());
@@ -73,9 +71,6 @@ namespace Labb03_QuizApplication.ViewModel
             RemoveItemCommand = new DelegateCommand(RemoveItem, canExecute => SelectedQuestion != null);
             IsConfigVisible = true;
             AddItemCommand = new DelegateCommand(AddItem);
-            //AddItemCommand = new DelegateCommand(AddItem);
-            //SelectedQuestion = new Question("", "", "", "", "");
-            //SelectedQuestion = mainWindowViewModel.ActivePack.Questions.FirstOrDefault();
         }
 
 

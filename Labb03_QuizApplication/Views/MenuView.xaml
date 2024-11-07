@@ -30,7 +30,7 @@
                           >
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
-                            <Setter Property="Header" Value="{Binding Name}"/>
+                            <Setter Property="Header" Value="{Binding}"/>
                             <Setter Property="Command" 
                                     Value="{Binding DataContext.SetActivePackCommand, 
                                     RelativeSource={RelativeSource 
@@ -84,7 +84,8 @@
                           Command="{Binding SetConfigVisCommand}"/>
                 <Separator/>
                 <MenuItem Header="_Fullscreen" 
-                          Icon="{fa:Icon Expand}"/>
+                          Icon="{fa:Icon Expand}"
+                          Click="MenuItem_Click"/>
             </MenuItem>
 
         </Menu> 

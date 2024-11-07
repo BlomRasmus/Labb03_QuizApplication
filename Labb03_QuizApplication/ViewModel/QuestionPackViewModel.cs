@@ -26,11 +26,11 @@ namespace Labb03_QuizApplication.ViewModel
         [JsonConstructor]
         public QuestionPackViewModel()
         {
-            model = new QuestionPack() { Questions = new List<Question>() };
+            model = new QuestionPack() { Questions = [] };
             Questions = new ObservableCollection<Question>(model.Questions);
         }
 
-        public ObservableCollection<Question> Questions { get; }
+        public ObservableCollection<Question> Questions { get; set; }
         public string Name 
         {
             get => model.Name;
@@ -61,6 +61,10 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
+        public override string ToString()
+        {
+            return $"{Name}   ({Difficulty})";
+        }
 
     }
 }

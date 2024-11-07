@@ -1,5 +1,6 @@
 ﻿using Labb03_QuizApplication.Command;
 using Labb03_QuizApplication.DialogServices;
+using Labb03_QuizApplication.JsonHandler;
 using Labb03_QuizApplication.Model;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Labb03_QuizApplication.ViewModel
     class MainWindowViewModel : ViewModelBase
     {
 		//TODO: Lägg i Egen klass
-		private readonly string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\packs.json";
+		//private readonly string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\packs.json";
 
         DialogService AddPackDialog = new DialogService();
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
@@ -59,7 +60,7 @@ namespace Labb03_QuizApplication.ViewModel
 			{
 				_activePack = value;
 				RaisePropertyChanged();
-				ConfigurationViewModel.RaisePropertyChanged("ActivePack");
+				ConfigurationViewModel?.RaisePropertyChanged();
 			}
 		}
 
@@ -69,7 +70,7 @@ namespace Labb03_QuizApplication.ViewModel
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
-			ReadFile();
+			LoadData(ActivePack);
 			//Använd activePack för att binda allt till, programmet kommer enbart använda den aktiva questionPack, och den kommer uppdateras beroende på vilken som används
 
 			AddQuestionPackCommand = new DelegateCommand(AddQuestionPack);
@@ -78,38 +79,18 @@ namespace Labb03_QuizApplication.ViewModel
 			SetActivePackCommand = new DelegateCommand(SetActivePack);
 			DeleteQuestionPackCommand = new DelegateCommand(DeleteQuestionPack, IsNotEmpty => Packs.Count > 1);
 			EditNewQuestionPackCommand = new DelegateCommand(EditNewQuestionPack);
-			ExitWindowCommand = new DelegateCommand(ExitWindow);
+			ExitWindowCommand = new DelegateCommand(ExitWindowAsync);
         }
 
-
-		//TODO: Lägg i en egen klass i model
-		public async Task WriteFile()
+		public async Task LoadData(QuestionPackViewModel newQuestionPack)
 		{
-			try
-			{
-				var myPacks = JsonSerializer.Serialize(Packs);
-				await File.WriteAllTextAsync(path, myPacks);
-			}
-			catch
-			{
-				throw new FileLoadException("Cant save");
-			}
-        }
+			Packs = await FileReader.ReadFile(newQuestionPack);
+			ActivePack = Packs.FirstOrDefault();
+		}
 
-
-		//TODO: Lägg också i egen klass
-		public async Task ReadFile()
+		public async Task SaveData(ObservableCollection<QuestionPackViewModel> packs)
 		{
-			try
-			{
-				var myPacks = await File.ReadAllTextAsync(path);
-				Packs = JsonSerializer.Deserialize<ObservableCollection<QuestionPackViewModel>>(myPacks);
-                ActivePack = Packs[0];
-			}
-			catch
-			{
-                Packs.Add(ActivePack);
-            }
+			await FileReader.WriteFile(packs);
 		}
 		public void EditNewQuestionPack(object parameter)
 		{
@@ -146,9 +127,9 @@ namespace Labb03_QuizApplication.ViewModel
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
-		public void ExitWindow(object? obj)
+		public async void ExitWindowAsync(object? obj)
 		{
-			WriteFile();
+            await SaveData(Packs);
 			Application.Current.Shutdown();
 		}
 

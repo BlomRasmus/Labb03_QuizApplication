@@ -25,5 +25,25 @@ namespace Labb03_QuizApplication.Views
         {
             InitializeComponent();
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Window mainWindow = Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                if (mainWindow.WindowState == WindowState.Maximized && mainWindow.WindowStyle == WindowStyle.None)
+                {
+                    mainWindow.WindowState = WindowState.Normal;
+                    mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+                    mainWindow.ResizeMode = ResizeMode.CanResize;
+                }
+                else
+                {
+                    mainWindow.WindowState = WindowState.Maximized;
+                    mainWindow.WindowStyle = WindowStyle.None;
+                    mainWindow.ResizeMode = ResizeMode.NoResize;
+                }
+            }
+        }
     }
 }
