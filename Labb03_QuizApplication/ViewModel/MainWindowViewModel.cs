@@ -24,9 +24,7 @@ namespace Labb03_QuizApplication.ViewModel
 
         DialogService AddPackDialog = new DialogService();
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
-
         public PlayerViewModel PlayerViewModel { get; }
-
         public ConfigurationViewModel ConfigurationViewModel { get; }
 
 
@@ -66,7 +64,7 @@ namespace Labb03_QuizApplication.ViewModel
 
         public MainWindowViewModel()
         {
-			Packs = new();
+            Packs = new();
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);

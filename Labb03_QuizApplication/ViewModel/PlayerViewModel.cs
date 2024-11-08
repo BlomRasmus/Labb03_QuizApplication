@@ -57,6 +57,19 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
+        private bool _hasAnswered;
+
+        public bool HasAnswered
+        {
+            get { return _hasAnswered; }
+            set 
+            {
+                _hasAnswered = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
 
         private string myVar;
 
@@ -175,8 +188,10 @@ namespace Labb03_QuizApplication.ViewModel
 
             IsPlayerVisible = false;
             IsEndOfQuiz = false;
+            HasAnswered = false;
             AnswerColors = new ObservableCollection<string> { "White", "White", "White", "White", };
 
+            //TODO: 
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
             StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
 
@@ -224,20 +239,28 @@ namespace Labb03_QuizApplication.ViewModel
 
         public async void CheckAnswer(object? buttonAnswer)
         {
+
             int indexOfAnswer = Int32.Parse((string)buttonAnswer);
             int indexOfCorrectAnswer = RandomizedAnswers.IndexOf(ActiveQuestion.CorrectAnswer);
-
-            if (RandomizedAnswers[indexOfAnswer] == RandomizedAnswers[indexOfCorrectAnswer])
+            
+            if(HasAnswered == false)
             {
-                correctAnswers++;
-                await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, true);
-            }
-            else
-            {
-                await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, false);
-            }
+                HasAnswered = true;
 
-            SetNewQuestion();
+                if (RandomizedAnswers[indexOfAnswer] == RandomizedAnswers[indexOfCorrectAnswer])
+                {
+                    correctAnswers++;
+                    await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, true);
+                }
+                else
+                {
+                    await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, false);
+                }
+
+                SetNewQuestion();
+                HasAnswered = false;
+
+            }
         }
 
         public void SetNewQuestion()

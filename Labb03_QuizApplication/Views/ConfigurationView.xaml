@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converter="clr-namespace:Labb03_QuizApplication.Converters"
              xmlns:local="clr-namespace:Labb03_QuizApplication.Views"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
@@ -11,10 +12,11 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converter:NotActualHeighButClose x:Key="NotActualHeight" />
     </UserControl.Resources>
 
     <Grid x:Name="ConfigGrid"
-        Background="White"
+          Background="White"
           Visibility="{Binding IsConfigVisible, Converter={StaticResource BoolToVis}}">
 
         <Grid.ColumnDefinitions>
@@ -83,7 +85,7 @@
 
             <ListBox
                 x:Name="ConfigDataGrid"
-                Height="{Binding ElementName=ConfigGrid, Path=ActualHeight}"
+                Height="{Binding ElementName=ConfigGrid, Path=ActualHeight, Converter={StaticResource NotActualHeight}}"
                 Margin="10 0 10 10"
                 Background="White"
                 SelectedItem="{Binding SelectedQuestion, Mode=TwoWay}"
@@ -105,7 +107,8 @@
 
         </StackPanel>
 
-        <StackPanel Grid.Column="1"
+        <StackPanel x:Name="ConfigPanel"
+                    Grid.Column="1"
                     Margin="0 0 10 10"
                     Visibility="{Binding Path=Visibility, Converter={StaticResource BoolToVis}}"
             >
@@ -129,7 +132,7 @@
 
             <TextBox 
                     Margin="10 0 10 10"
-                    Text="{Binding SelectedQuestion.CorrectAnswer}"
+                    Text="{Binding SelectedQuestion.CorrectAnswer, UpdateSourceTrigger=PropertyChanged}"
                     Height="20"/>
 
             <Label 
@@ -139,7 +142,7 @@
 
             <TextBox 
                     Margin="10 0 10 10"
-                    Text="{Binding SelectedQuestion.IncorrectAnswers[0]}"
+                    Text="{Binding SelectedQuestion.IncorrectAnswers[0], UpdateSourceTrigger=PropertyChanged}"
                     Height="20"/>
 
             <Label 
@@ -149,7 +152,7 @@
 
             <TextBox 
                     Margin="10 0 10 10"
-                    Text="{Binding SelectedQuestion.IncorrectAnswers[1]}"
+                    Text="{Binding SelectedQuestion.IncorrectAnswers[1], UpdateSourceTrigger=PropertyChanged}"
                     Height="20"/>
 
             <Label 
@@ -159,7 +162,7 @@
 
             <TextBox 
                     Margin="10 0 10 10"
-                    Text="{Binding SelectedQuestion.IncorrectAnswers[2]}"
+                    Text="{Binding SelectedQuestion.IncorrectAnswers[2], UpdateSourceTrigger=PropertyChanged}"
                     Height="20"/>
 
         </StackPanel>

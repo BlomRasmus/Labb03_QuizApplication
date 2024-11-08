@@ -35,6 +35,7 @@ namespace Labb03_QuizApplication.Views
                 {
                     mainWindow.WindowState = WindowState.Normal;
                     mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+                    mainWindow.WindowStyle = WindowStyle.None;
                     mainWindow.ResizeMode = ResizeMode.CanResize;
                 }
                 else
