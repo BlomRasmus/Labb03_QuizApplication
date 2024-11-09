@@ -22,5 +22,12 @@ namespace Labb03_QuizApplication.DialogServices
 
             createPackOptionsDialog.ShowDialog();
         }
+
+        public void ShowImportQuestionsDialog()
+        {
+            var importQuestionsDialog = new ImportQuestionsDialog();
+
+            importQuestionsDialog.ShowDialog();
+        }
     }
 }

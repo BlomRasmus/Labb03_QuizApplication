@@ -19,11 +19,13 @@ namespace Labb03_QuizApplication.ViewModel
 {
     class MainWindowViewModel : ViewModelBase
     {
-		//TODO: Lägg i Egen klass
-		//private readonly string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\packs.json";
+		public OpenTriviaHandler test;
 
-        DialogService AddPackDialog = new DialogService();
+
+        DialogService ShowDialog = new DialogService();
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
+		public ObservableCollection<Trivia_Categories> Categories { get; set; }
+		public ObservableCollection<string> Difficulties { get; set; } = new ObservableCollection<string> { "easy", "medium", "hard" };
         public PlayerViewModel PlayerViewModel { get; }
         public ConfigurationViewModel ConfigurationViewModel { get; }
 
@@ -36,10 +38,51 @@ namespace Labb03_QuizApplication.ViewModel
 		public DelegateCommand DeleteQuestionPackCommand { get; }
 		public DelegateCommand EditNewQuestionPackCommand { get; }
 		public DelegateCommand ExitWindowCommand { get; }
+		public DelegateCommand ShowImportQuestionsDialogCommand { get; }
+		public DelegateCommand ImportQuestionsCommand { get; }
 
 
 
-        private QuestionPackViewModel _newQuestionPack;
+		private int _categoryIndex;
+
+		public int CategoryIndex
+		{
+			get { return _categoryIndex; }
+			set 
+			{
+				_categoryIndex = value;
+				RaisePropertyChanged();
+			}
+		}
+
+		private string _importQuestionDifficulty;
+
+		public string ImportQuestionDifficulty
+		{
+			get { return _importQuestionDifficulty; }
+			set 
+			{
+				_importQuestionDifficulty = value;
+				RaisePropertyChanged();
+			}
+		}
+
+		private int _numberOfImportedQuestions;
+
+		public int NumberOfImportedQuestions
+		{
+			get { return _numberOfImportedQuestions; }
+			set 
+			{
+				_numberOfImportedQuestions = value;
+				RaisePropertyChanged();
+			}
+		}
+
+
+
+
+		private QuestionPackViewModel _newQuestionPack;
         public QuestionPackViewModel NewQuestionPack 
 		{ 
 			get => _newQuestionPack;
@@ -64,12 +107,16 @@ namespace Labb03_QuizApplication.ViewModel
 
         public MainWindowViewModel()
         {
+            test = new();
             Packs = new();
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
+
+
 			LoadData(ActivePack);
-			//Använd activePack för att binda allt till, programmet kommer enbart använda den aktiva questionPack, och den kommer uppdateras beroende på vilken som används
+			SetCategoryList();
+			
 
 			AddQuestionPackCommand = new DelegateCommand(AddQuestionPack);
 			SetConfigVisCommand = new DelegateCommand(SetConfigVis, canChange => ConfigurationViewModel.IsConfigVisible != true);
@@ -78,23 +125,64 @@ namespace Labb03_QuizApplication.ViewModel
 			DeleteQuestionPackCommand = new DelegateCommand(DeleteQuestionPack, IsNotEmpty => Packs.Count > 1);
 			EditNewQuestionPackCommand = new DelegateCommand(EditNewQuestionPack);
 			ExitWindowCommand = new DelegateCommand(ExitWindowAsync);
+			ShowImportQuestionsDialogCommand = new DelegateCommand(ShowImportDialog);
+			ImportQuestionsCommand = new DelegateCommand(GetImportedData);
+        }
+
+
+		public async void GetImportedData(object obj)
+		{
+			await ImportData();
+		}
+		public async Task SetCategoryList()
+		{
+			Categories = new ObservableCollection<Trivia_Categories>(await test.GetCategories());
         }
 
 		public async Task LoadData(QuestionPackViewModel newQuestionPack)
 		{
 			Packs = await FileReader.ReadFile(newQuestionPack);
-			ActivePack = Packs.FirstOrDefault();
+
+			if(Packs != null)
+			{
+				ActivePack = Packs.FirstOrDefault();
+			}
+			else
+			{
+				ActivePack = new QuestionPackViewModel();
+			}
 		}
 
 		public async Task SaveData(ObservableCollection<QuestionPackViewModel> packs)
 		{
 			await FileReader.WriteFile(packs);
 		}
+
+		public async Task ImportData()
+		{
+			int id = Categories[CategoryIndex].id;
+
+            OpenTriviaHandler test = new();
+            Rootobject testString = await test.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
+
+            foreach (var item in testString.results)
+            {
+                ActivePack.Questions
+                    .Add(new Question(item.question,
+                    item.correct_answer,
+                    item.incorrect_answers[0],
+                    item.incorrect_answers[1],
+                    item.incorrect_answers[2]));
+            }
+            await test.GetCategories();
+
+			Packs.Add(ActivePack);
+        }
 		public void EditNewQuestionPack(object parameter)
 		{
             QuestionPack questionPack = new QuestionPack("My Question Pack");
             NewQuestionPack = new QuestionPackViewModel(questionPack);
-            AddPackDialog.ShowCreatePackModelDialog();
+            ShowDialog.ShowCreatePackModelDialog();
         }
         public void AddQuestionPack(object parameter)
 		{
@@ -129,6 +217,11 @@ namespace Labb03_QuizApplication.ViewModel
 		{
             await SaveData(Packs);
 			Application.Current.Shutdown();
+		}
+
+		public void ShowImportDialog(object parameter)
+		{
+			ShowDialog.ShowImportQuestionsDialog();
 		}
 
 		public void SetActivePack(object obj) => ActivePack = obj as QuestionPackViewModel;

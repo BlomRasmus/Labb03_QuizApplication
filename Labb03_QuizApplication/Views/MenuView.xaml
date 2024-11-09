@@ -46,6 +46,9 @@
                           Command="{Binding DeleteQuestionPackCommand}"
                           />
                 <Separator />
+                <MenuItem Header="Import Questions"
+                          Icon="{fa:Icon cloudarrowup}"
+                          Command="{Binding ShowImportQuestionsDialogCommand}"/>
                 <MenuItem Header="E_xit"
                           InputGestureText="Alt + F4"
                           Icon="{fa:Icon ArrowRightFromBracket}"

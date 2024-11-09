@@ -1,0 +1,92 @@
+﻿<Window x:Class="Labb03_QuizApplication.Dialogs.ImportQuestionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb03_QuizApplication.Dialogs"
+        mc:Ignorable="d"
+        Title="ImportQuestionsDialog" Height="350" Width="250">
+    <Grid>
+
+        <StackPanel
+            Margin="10 10 10 10"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+
+            <Label x:Name="CreatePackOptionsLabel"
+                   Content="Category:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Width="200"/>
+            <ComboBox
+                ItemsSource="{Binding Categories}"
+                SelectedIndex="{Binding CategoryIndex}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Label Content="Difficulty:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Margin="0 10 0 0"/>
+
+            <ComboBox
+                ItemsSource="{Binding Difficulties}"
+                SelectedItem="{Binding ImportQuestionDifficulty}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <StackPanel
+                Orientation="Horizontal"
+                Margin="0 10 0 0"
+                Width="{Binding ElementName=CreatePackOptionsLabel}">
+
+                <Label Content="Number Of Questions:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       HorizontalAlignment="Left"/>
+                <Label Content="{Binding Value, ElementName=NewTimeLimit}"
+                       FontSize="15"
+                       HorizontalAlignment="Right"
+                       />
+
+            </StackPanel>
+
+            <Slider x:Name="NewTimeLimit"
+                    Width="{Binding ElementName=CreatePackOptionsLabel}"
+                    Height="30"
+                    VerticalAlignment="Center"
+                    Margin="5 0 0 0"
+                    Minimum="1"
+                    Maximum="50"
+                    TickPlacement="BottomRight"
+                    TickFrequency="1"
+                    IsSnapToTickEnabled="True"
+                    Value="{Binding NumberOfImportedQuestions}"/>
+
+
+            <DockPanel
+                        Width="125">
+
+                <Button Content="Import"
+                        Height="30"
+                        Width="50"
+                        HorizontalAlignment="Center"
+                        Command="{Binding ImportQuestionsCommand}"
+                        Click="Button_Click"/>
+            </DockPanel>
+
+        </StackPanel>
+
+
+    </Grid>
+</Window>
