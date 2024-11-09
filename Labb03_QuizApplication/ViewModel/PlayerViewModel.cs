@@ -16,7 +16,6 @@ namespace Labb03_QuizApplication.ViewModel
     {
         private int currentQuestionIndex;
         private int correctAnswers = 0;
-        //private string[] AnswerColors = new string[4] { "gray", "gray", "gray", "gray" };
 
         private bool _makeWayForEndMessage;
 
@@ -71,12 +70,12 @@ namespace Labb03_QuizApplication.ViewModel
 
 
 
-        private string myVar;
+        private string _message;
 
-        public string Message
+        public string QuestionMessage
         {
-            get { return myVar; }
-            set { myVar = value; RaisePropertyChanged(); }
+            get { return _message; }
+            set { _message = value; RaisePropertyChanged(); }
         }
 
 
@@ -191,7 +190,6 @@ namespace Labb03_QuizApplication.ViewModel
             HasAnswered = false;
             AnswerColors = new ObservableCollection<string> { "White", "White", "White", "White", };
 
-            //TODO: 
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
             StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
 
@@ -225,7 +223,6 @@ namespace Labb03_QuizApplication.ViewModel
 
             if(TimeLeft < 1)
             {
-                //set new question metod
                 SetNewQuestion();
             }
         }
@@ -234,7 +231,7 @@ namespace Labb03_QuizApplication.ViewModel
         {
             TimeLeft = ActivePack.TimeLimitInSeconds;
             Timer.Start();
-            Message = $"Question {currentQuestionIndex + 1} of {RandomizedQuestions.Count}";
+            QuestionMessage = $"Question {currentQuestionIndex + 1} of {RandomizedQuestions.Count}";
         }
 
         public async void CheckAnswer(object? buttonAnswer)

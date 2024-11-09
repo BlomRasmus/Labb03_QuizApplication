@@ -41,6 +41,17 @@ namespace Labb03_QuizApplication.ViewModel
 		public DelegateCommand ShowImportQuestionsDialogCommand { get; }
 		public DelegateCommand ImportQuestionsCommand { get; }
 
+		private string _statusReport;
+
+		public string StatusReport
+		{
+			get { return _statusReport; }
+			set 
+			{
+				_statusReport = value;
+				RaisePropertyChanged();
+			}
+		}
 
 
 		private int _categoryIndex;
@@ -163,20 +174,27 @@ namespace Labb03_QuizApplication.ViewModel
 			int id = Categories[CategoryIndex].id;
 
             OpenTriviaHandler test = new();
-            Rootobject testString = await test.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
 
-            foreach (var item in testString.results)
-            {
-                ActivePack.Questions
-                    .Add(new Question(item.question,
-                    item.correct_answer,
-                    item.incorrect_answers[0],
-                    item.incorrect_answers[1],
-                    item.incorrect_answers[2]));
-            }
-            await test.GetCategories();
 
-			Packs.Add(ActivePack);
+			Rootobject importedData = await test.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
+
+
+			StatusReport = test.ShowImportStatus(importedData.response_code);
+
+
+			if(importedData.results != null)
+			{
+				foreach (var item in importedData.results)
+				{
+					ActivePack.Questions
+						.Add(new Question(item.question,
+						item.correct_answer,
+						item.incorrect_answers[0],
+						item.incorrect_answers[1],
+						item.incorrect_answers[2]));
+
+				}
+			}
         }
 		public void EditNewQuestionPack(object parameter)
 		{
@@ -218,6 +236,7 @@ namespace Labb03_QuizApplication.ViewModel
             await SaveData(Packs);
 			Application.Current.Shutdown();
 		}
+
 
 		public void ShowImportDialog(object parameter)
 		{

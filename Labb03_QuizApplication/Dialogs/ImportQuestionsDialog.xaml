@@ -85,6 +85,10 @@
                         Click="Button_Click"/>
             </DockPanel>
 
+            <TextBlock  Margin="10 10 10 10"
+                        Text="{Binding StatusReport}"
+                        FontSize="10"/>
+
         </StackPanel>
 
 

@@ -88,10 +88,13 @@
             HorizontalAlignment="Center">
 
 
-            <Label 
-                FontSize="30"
-                Content="{Binding ActiveQuestion.Query}"
-                HorizontalContentAlignment="Center"
+            <TextBlock 
+                FontSize="20"
+                Height="60"
+                TextAlignment="Center"
+                Width="600"
+                Text="{Binding ActiveQuestion.Query}"
+                TextWrapping="Wrap"
                 Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"
                 />
 
@@ -192,8 +195,5 @@
         </Button>
 
 
-        <!--<Button  
-            Content="{Binding Timer}"
-            Command="{Binding UpdateButtonCommand}"/>-->
     </Grid>
 </UserControl>
