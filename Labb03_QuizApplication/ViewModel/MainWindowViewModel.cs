@@ -19,7 +19,7 @@ namespace Labb03_QuizApplication.ViewModel
 {
     class MainWindowViewModel : ViewModelBase
     {
-		public OpenTriviaHandler test;
+		public OpenTriviaHandler TriviaHandler;
 
 
         DialogService ShowDialog = new DialogService();
@@ -52,6 +52,19 @@ namespace Labb03_QuizApplication.ViewModel
 				RaisePropertyChanged();
 			}
 		}
+
+		private bool _canImport;
+
+		public bool CanImport
+		{
+			get { return _canImport; }
+			set 
+			{
+				_canImport = value;
+				RaisePropertyChanged();
+			}
+		}
+
 
 
 		private int _categoryIndex;
@@ -118,17 +131,16 @@ namespace Labb03_QuizApplication.ViewModel
 
         public MainWindowViewModel()
         {
-            test = new();
+            TriviaHandler = new();
             Packs = new();
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
 			NumberOfImportedQuestions = 1;
-
+			CanImport = true;
 
 			LoadData(ActivePack);
 			SetCategoryList();
-			
 
 			AddQuestionPackCommand = new DelegateCommand(AddQuestionPack);
 			SetConfigVisCommand = new DelegateCommand(SetConfigVis, canChange => ConfigurationViewModel.IsConfigVisible != true);
@@ -139,16 +151,17 @@ namespace Labb03_QuizApplication.ViewModel
 			ExitWindowCommand = new DelegateCommand(ExitWindowAsync);
 			ShowImportQuestionsDialogCommand = new DelegateCommand(ShowImportDialog);
 			ImportQuestionsCommand = new DelegateCommand(GetImportedData);
+
         }
 
 
 		public async void GetImportedData(object obj)
 		{
-			await ImportData();
+				await ImportData();
 		}
 		public async Task SetCategoryList()
 		{
-			Categories = new ObservableCollection<Trivia_Categories>(await test.GetCategories());
+			Categories = new ObservableCollection<Trivia_Categories>(await TriviaHandler.GetCategories());
         }
 
 		public async Task LoadData(QuestionPackViewModel newQuestionPack)
@@ -172,10 +185,10 @@ namespace Labb03_QuizApplication.ViewModel
 
 		public async Task ImportData()
 		{
-			int id = Categories[CategoryIndex].id;
 
             OpenTriviaHandler test = new();
 
+			int id = Categories[CategoryIndex].id;
 
 			Rootobject importedData = await test.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
 
@@ -198,7 +211,7 @@ namespace Labb03_QuizApplication.ViewModel
 			}
 			else
 			{
-                StatusReport = test.ShowImportStatus(5);
+                StatusReport = test.ShowImportStatus(importedData.response_code);
             }
 
 			ShowDialog.ShowImportStatusDialog();

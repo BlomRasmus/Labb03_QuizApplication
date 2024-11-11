@@ -50,7 +50,19 @@ namespace Labb03_QuizApplication.JsonHandler
             }
             catch(Exception e)
             {
-                
+                if(e.Message == "Response status code does not indicate success: 429 (Too Many Requests).")
+                {
+                    myQuestion.response_code = 5;
+                }
+                else if(e.Message == "No such host is known. (opentdb.com:443)")
+                {
+                    myQuestion.response_code = 6;
+                }
+                else
+                {
+                    myQuestion.response_code = 7;
+                }
+
                 return myQuestion;
             }
             
@@ -58,13 +70,17 @@ namespace Labb03_QuizApplication.JsonHandler
 
         public async Task<List<Trivia_Categories>> GetCategories()
         {
+
             string categoriesJson = await client.GetStringAsync("https://opentdb.com/api_category.php");
             RootobjectCategories categories = JsonSerializer.Deserialize<RootobjectCategories>(categoriesJson);
             return categories.trivia_categories.ToList();
+
         }
 
         public string ShowImportStatus(int responseCode)
         {
+
+
             switch (responseCode)
             {
                 case 0:
@@ -79,6 +95,8 @@ namespace Labb03_QuizApplication.JsonHandler
                     return "Token Empty Session Token has returned all possible questions for the specified query.Resetting the Token is necessary.";
                 case 5:
                     return "Rate Limit Too many requests have occurred. Each IP can only access the API once every 5 seconds.";
+                case 6:
+                    return "No such host is known. (opentdb.com:443)";
                 default:
                     return "Unexpected error occured";
             }
