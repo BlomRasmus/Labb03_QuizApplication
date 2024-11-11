@@ -223,7 +223,13 @@ namespace Labb03_QuizApplication.ViewModel
 
             if(TimeLeft < 1)
             {
+                Timer.Stop();
+
+                int indexOfCorrectAnswer = RandomizedAnswers.IndexOf(ActiveQuestion.CorrectAnswer);
+                await SetAnswersColor(indexOfCorrectAnswer, indexOfCorrectAnswer, true);
                 SetNewQuestion();
+
+
             }
         }
 
