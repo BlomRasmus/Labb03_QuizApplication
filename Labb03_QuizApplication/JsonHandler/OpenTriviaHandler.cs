@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Labb03_QuizApplication.JsonHandler
 {
@@ -26,11 +27,32 @@ namespace Labb03_QuizApplication.JsonHandler
             string modifiedUri = $"/api.php?amount={amount}&category={id}&difficulty={difficulty}&type=multiple";
 
             Uri fullUri = new Uri(baseuri, modifiedUri);
+            Rootobject myQuestion = new Rootobject();
 
-            string ApiData = await client.GetStringAsync(fullUri);
-            Rootobject myQuestions = JsonSerializer.Deserialize<Rootobject>(ApiData);
+            try
+            {
+                string ApiData = await client.GetStringAsync(fullUri);
+                myQuestion = JsonSerializer.Deserialize<Rootobject>(ApiData);
 
-            return myQuestions;
+                foreach(var questions in myQuestion.results)
+                {
+                    questions.question = HttpUtility.HtmlDecode(questions.question);
+                    questions.correct_answer = HttpUtility.HtmlDecode(questions.correct_answer);
+
+                    for ( int i = 0; i < questions.incorrect_answers.Length; i++)
+                    {
+                        questions.incorrect_answers[i] = HttpUtility.HtmlDecode(questions.incorrect_answers[i]);
+                    }
+
+                }
+
+                return myQuestion;
+            }
+            catch(Exception e)
+            {
+                
+                return myQuestion;
+            }
             
         }
 

@@ -245,8 +245,10 @@ namespace Labb03_QuizApplication.ViewModel
 
             int indexOfAnswer = Int32.Parse((string)buttonAnswer);
             int indexOfCorrectAnswer = RandomizedAnswers.IndexOf(ActiveQuestion.CorrectAnswer);
-            
-            if(HasAnswered == false)
+            Timer.Stop();
+
+
+            if (HasAnswered == false)
             {
                 HasAnswered = true;
 

@@ -29,5 +29,12 @@ namespace Labb03_QuizApplication.DialogServices
 
             importQuestionsDialog.ShowDialog();
         }
+
+        public void ShowImportStatusDialog()
+        {
+            var importStatusDialog = new ImportStatusDialog();
+
+            importStatusDialog.Show();
+        }
     }
 }

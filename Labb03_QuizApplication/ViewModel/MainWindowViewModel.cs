@@ -123,6 +123,7 @@ namespace Labb03_QuizApplication.ViewModel
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
+			NumberOfImportedQuestions = 1;
 
 
 			LoadData(ActivePack);
@@ -179,7 +180,6 @@ namespace Labb03_QuizApplication.ViewModel
 			Rootobject importedData = await test.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
 
 
-			StatusReport = test.ShowImportStatus(importedData.response_code);
 
 
 			if(importedData.results != null)
@@ -194,7 +194,14 @@ namespace Labb03_QuizApplication.ViewModel
 						item.incorrect_answers[2]));
 
 				}
+				StatusReport = test.ShowImportStatus(importedData.response_code);
 			}
+			else
+			{
+                StatusReport = test.ShowImportStatus(5);
+            }
+
+			ShowDialog.ShowImportStatusDialog();
         }
 		public void EditNewQuestionPack(object parameter)
 		{
