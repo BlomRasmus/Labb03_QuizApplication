@@ -62,7 +62,9 @@ namespace Labb03_QuizApplication.ViewModel
 			{
 				_canImport = value;
 				RaisePropertyChanged();
-			}
+				ShowImportQuestionsDialogCommand.RaiseCanExecuteChanged();
+
+            }
 		}
 
 
@@ -137,7 +139,6 @@ namespace Labb03_QuizApplication.ViewModel
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
 			NumberOfImportedQuestions = 1;
-			CanImport = true;
 
 			LoadData(ActivePack);
 			SetCategoryList();
@@ -152,12 +153,22 @@ namespace Labb03_QuizApplication.ViewModel
 			ShowImportQuestionsDialogCommand = new DelegateCommand(ShowImportDialog);
 			ImportQuestionsCommand = new DelegateCommand(GetImportedData);
 
+
         }
 
 
 		public async void GetImportedData(object obj)
 		{
+			try
+			{
 				await ImportData();
+			}
+			catch
+			{
+				StatusReport = TriviaHandler.ShowImportStatus(6);
+                ShowDialog.ShowImportStatusDialog();
+            }
+			
 		}
 		public async Task SetCategoryList()
 		{
@@ -186,11 +197,12 @@ namespace Labb03_QuizApplication.ViewModel
 		public async Task ImportData()
 		{
 
-            OpenTriviaHandler test = new();
+            OpenTriviaHandler TriviaHandler = new();
+
 
 			int id = Categories[CategoryIndex].id;
 
-			Rootobject importedData = await test.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
+			Rootobject importedData = await TriviaHandler.GetQuestions(NumberOfImportedQuestions, id, ImportQuestionDifficulty);
 
 
 
@@ -207,11 +219,11 @@ namespace Labb03_QuizApplication.ViewModel
 						item.incorrect_answers[2]));
 
 				}
-				StatusReport = test.ShowImportStatus(importedData.response_code);
+				StatusReport = TriviaHandler.ShowImportStatus(importedData.response_code);
 			}
 			else
 			{
-                StatusReport = test.ShowImportStatus(importedData.response_code);
+                StatusReport = TriviaHandler.ShowImportStatus(importedData.response_code);
             }
 
 			ShowDialog.ShowImportStatusDialog();

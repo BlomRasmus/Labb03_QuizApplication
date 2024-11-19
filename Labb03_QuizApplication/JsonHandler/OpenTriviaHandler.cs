@@ -70,10 +70,17 @@ namespace Labb03_QuizApplication.JsonHandler
 
         public async Task<List<Trivia_Categories>> GetCategories()
         {
-
-            string categoriesJson = await client.GetStringAsync("https://opentdb.com/api_category.php");
-            RootobjectCategories categories = JsonSerializer.Deserialize<RootobjectCategories>(categoriesJson);
-            return categories.trivia_categories.ToList();
+            try
+            {
+                string categoriesJson = await client.GetStringAsync("https://opentdb.com/api_category.php");
+                RootobjectCategories categories = JsonSerializer.Deserialize<RootobjectCategories>(categoriesJson);
+                return categories.trivia_categories.ToList();
+            }
+            catch(Exception e)
+            {
+                var emptyList = new List<Trivia_Categories>();
+                return emptyList;
+            }
 
         }
 
