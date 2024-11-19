@@ -53,22 +53,6 @@ namespace Labb03_QuizApplication.ViewModel
 			}
 		}
 
-		private bool _canImport;
-
-		public bool CanImport
-		{
-			get { return _canImport; }
-			set 
-			{
-				_canImport = value;
-				RaisePropertyChanged();
-				ShowImportQuestionsDialogCommand.RaiseCanExecuteChanged();
-
-            }
-		}
-
-
-
 		private int _categoryIndex;
 
 		public int CategoryIndex
