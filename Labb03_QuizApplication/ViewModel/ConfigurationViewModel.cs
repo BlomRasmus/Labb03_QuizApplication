@@ -1,5 +1,6 @@
 ﻿using Labb03_QuizApplication.Command;
 using Labb03_QuizApplication.DialogServices;
+using Labb03_QuizApplication.JsonHandler;
 using Labb03_QuizApplication.Model;
 using System;
 using System.Collections.Generic;
@@ -52,13 +53,12 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
-
-
         public DelegateCommand AddItemCommand { get; }
 
         public DelegateCommand RemoveItemCommand { get; }
 
         public DelegateCommand ShowDialogCommand => new DelegateCommand(myDialog => ShowDialog());
+        public DelegateCommand UpdatePackOptionsCommand { get; }
 
 
         public QuestionPackViewModel? ActivePack { get => mainWindowViewModel?.ActivePack; }
@@ -70,29 +70,37 @@ namespace Labb03_QuizApplication.ViewModel
             this.mainWindowViewModel = mainWindowViewModel;
             RemoveItemCommand = new DelegateCommand(RemoveItem, canExecute => SelectedQuestion != null);
             IsConfigVisible = true;
-            AddItemCommand = new DelegateCommand(AddItem);
+            AddItemCommand = new DelegateCommand(CreateQuestion);
+            UpdatePackOptionsCommand = new DelegateCommand(UpdatePackOptions);
         }
 
 
-        public void AddItem(object parameter)
+        public void CreateQuestion(object parameter)
         {
             var question = new Question("", "", "", "", "");
             ActivePack.Questions.Add(question);
             SelectedQuestion = question;
             RaisePropertyChanged("ActivePack");
             mainWindowViewModel.SetPlayerVisCommand.RaiseCanExecuteChanged();
+
         }
+
         public void RemoveItem(object parameter)
         {
             ActivePack.Questions.Remove(SelectedQuestion);
             RaisePropertyChanged("ActivePack");
 
             if(ActivePack.Questions.Any()) mainWindowViewModel.SetPlayerVisCommand.RaiseCanExecuteChanged();
+            FileReader.UpdateDb(ActivePack);
         }
 
         public void ShowDialog()
         {
             dialog.ShowPackOptionsDialog();
+        }
+        public void UpdatePackOptions(object obj)
+        {
+            FileReader.UpdateDb(ActivePack);
         }
 
     }

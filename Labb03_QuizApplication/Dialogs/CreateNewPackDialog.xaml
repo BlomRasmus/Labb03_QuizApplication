@@ -6,7 +6,7 @@
         xmlns:converter="clr-namespace:Labb03_QuizApplication.Converters"
         xmlns:local="clr-namespace:Labb03_QuizApplication.Dialogs"
         mc:Ignorable="d"
-        Title="CreateNewPackDialog" Height="300" Width="250">
+        Title="CreateNewPackDialog" Height="350" Width="250">
 
     <Window.Resources>
         <converter:IntToDifficultyConverter x:Key="IntToDif"/>
@@ -63,6 +63,7 @@
                        />
 
             </StackPanel>
+           
 
             <Slider x:Name="NewTimeLimit"
                     Width="{Binding ElementName=CreatePackOptionsLabel}"
@@ -75,9 +76,21 @@
                     IsSnapToTickEnabled="True"
                     Value="{Binding NewQuestionPack.TimeLimitInSeconds}"/>
 
+            <Label Content="Category:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Margin="0 0 0 0"/>
+
+            <ComboBox
+                ItemsSource="{Binding QuestionPackCategories}"
+                SelectedItem="{Binding NewQuestionPack.Category}"
+                >
+            </ComboBox>
 
             <DockPanel
-                        Width="125">
+                        Width="125"
+                        Margin="10">
                 <Button Content="Cancel"
                         Height="30"
                         Width="50"

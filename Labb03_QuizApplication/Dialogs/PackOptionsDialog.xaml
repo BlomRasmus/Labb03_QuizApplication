@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Labb03_QuizApplication.Dialogs"
         xmlns:converter="clr-namespace:Labb03_QuizApplication.Converters"
         mc:Ignorable="d" DataContext="{Binding ConfigurationViewModel}"
-        Title="PackOptionsDialog" Height="300" Width="250">
+        Title="PackOptionsDialog" Height="325" Width="250">
 
     <Window.Resources>
         <converter:IntToDifficultyConverter x:Key="IntToDif"/>
@@ -67,6 +67,28 @@
                     TickFrequency="1"
                     IsSnapToTickEnabled="True"
                     Value="{Binding ActivePack.TimeLimitInSeconds}"/>
+
+            <Label Content="Category:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Margin="0 0 0 0"/>
+
+            <ComboBox
+                ItemsSource="{Binding QuestionPackCategories}"
+                SelectedItem="{Binding ActivePack.Category}"
+                Margin="0 0 0 5"
+                >
+            </ComboBox>
+
+            <Button Content="Save"
+                        Height="30"
+                        Width="50"
+                        HorizontalAlignment="Center"
+                        Command="{Binding UpdatePackOptionsCommand}"
+                        Click="Button_Click"
+                        />
+            
 
 
         </StackPanel>

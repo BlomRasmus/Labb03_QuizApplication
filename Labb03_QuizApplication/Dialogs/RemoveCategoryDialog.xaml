@@ -1,0 +1,42 @@
+﻿<Window x:Class="Labb03_QuizApplication.Dialogs.RemoveCategoryDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb03_QuizApplication.Dialogs"
+        mc:Ignorable="d"
+        Title="RemoveCategoryDialog" Height="200" Width="200">
+    <Grid>
+        <StackPanel
+            VerticalAlignment="Center"
+            Margin="10">
+            <Label Content="Category:"
+                   FontWeight="Bold"
+                   FontSize="15"
+                   HorizontalAlignment="Left"
+                   Margin="0 0 0 0"/>
+
+            <ComboBox
+                ItemsSource="{Binding QuestionPackCategories}"
+                SelectedItem="{Binding SelectedCategory, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                />
+
+
+            <DockPanel
+                        Width="125"
+                        Margin="10">
+                <Button Content="Cancel"
+                        Height="30"
+                        Width="50"
+                        Click="Button_Click_1"/>
+
+                <Button Content="Remove"
+                        Height="30"
+                        Width="50"
+                        HorizontalAlignment="Right"
+                        Command="{Binding RemoveCategoryCommand}"
+                        Click="Button_Click"/>
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>

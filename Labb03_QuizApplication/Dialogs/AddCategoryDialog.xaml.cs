@@ -1,5 +1,4 @@
-﻿using Labb03_QuizApplication.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,17 +15,22 @@ using System.Windows.Shapes;
 namespace Labb03_QuizApplication.Dialogs
 {
     /// <summary>
-    /// Interaction logic for PackOptionsDialog.xaml
+    /// Interaction logic for AddCategoryDialog.xaml
     /// </summary>
-    public partial class PackOptionsDialog : Window
+    public partial class AddCategoryDialog : Window
     {
-        public PackOptionsDialog()
+        public AddCategoryDialog()
         {
             InitializeComponent();
             DataContext = (App.Current.MainWindow as MainWindow).DataContext;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             Close();
         }

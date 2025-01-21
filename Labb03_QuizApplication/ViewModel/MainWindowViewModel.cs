@@ -2,6 +2,7 @@
 using Labb03_QuizApplication.DialogServices;
 using Labb03_QuizApplication.JsonHandler;
 using Labb03_QuizApplication.Model;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Shapes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
@@ -26,6 +28,7 @@ namespace Labb03_QuizApplication.ViewModel
         public ObservableCollection<QuestionPackViewModel> Packs { get; set; }
 		public ObservableCollection<Trivia_Categories> Categories { get; set; }
 		public ObservableCollection<string> Difficulties { get; set; } = new ObservableCollection<string> { "easy", "medium", "hard" };
+		public ObservableCollection<CategoryViewModel> QuestionPackCategories { get; set; }
         public PlayerViewModel PlayerViewModel { get; }
         public ConfigurationViewModel ConfigurationViewModel { get; }
 
@@ -40,8 +43,13 @@ namespace Labb03_QuizApplication.ViewModel
 		public DelegateCommand ExitWindowCommand { get; }
 		public DelegateCommand ShowImportQuestionsDialogCommand { get; }
 		public DelegateCommand ImportQuestionsCommand { get; }
+		public DelegateCommand ShowAddCategoryDialogCommand { get; }
+        public DelegateCommand AddCategoryCommand { get; }
+		public DelegateCommand RemoveCategoryCommand { get; }
+		public DelegateCommand ShowRemoveCategoryDialogCommand { get; }
 
-		private string _statusReport;
+
+        private string _statusReport;
 
 		public string StatusReport
 		{
@@ -115,10 +123,25 @@ namespace Labb03_QuizApplication.ViewModel
 			}
 		}
 
-        public MainWindowViewModel()
+		private CategoryViewModel _newCategory;
+
+		public CategoryViewModel SelectedCategory
+		{
+			get { return _newCategory; }
+			set 
+			{
+				_newCategory = value; 
+				RaisePropertyChanged(); 
+				ShowRemoveCategoryDialogCommand.RaiseCanExecuteChanged(); 
+			}
+		}
+
+
+		public MainWindowViewModel()
         {
             TriviaHandler = new();
             Packs = new();
+			QuestionPackCategories = new();
 			ConfigurationViewModel = new ConfigurationViewModel(this);
 			ActivePack = new QuestionPackViewModel(new QuestionPack("My Question Pack"));
 			PlayerViewModel = new PlayerViewModel(this);
@@ -136,8 +159,10 @@ namespace Labb03_QuizApplication.ViewModel
 			ExitWindowCommand = new DelegateCommand(ExitWindowAsync);
 			ShowImportQuestionsDialogCommand = new DelegateCommand(ShowImportDialog);
 			ImportQuestionsCommand = new DelegateCommand(GetImportedData);
-
-
+			ShowAddCategoryDialogCommand = new DelegateCommand(ShowAddCategoryDialog);
+			AddCategoryCommand = new DelegateCommand(AddCategory);
+			RemoveCategoryCommand = new DelegateCommand(RemoveCategory, IsNotNull => SelectedCategory != null);
+			ShowRemoveCategoryDialogCommand = new DelegateCommand(ShowRemoveCategoryDialog, isNotEmpty => QuestionPackCategories.Count > 0);
         }
 
 
@@ -162,6 +187,8 @@ namespace Labb03_QuizApplication.ViewModel
 		public async Task LoadData(QuestionPackViewModel newQuestionPack)
 		{
 			Packs = await FileReader.ReadFile(newQuestionPack);
+			QuestionPackCategories = await FileReader.LoadCategoriesAsync();
+			RaisePropertyChanged("Packs");
 
 			if(Packs != null)
 			{
@@ -175,7 +202,7 @@ namespace Labb03_QuizApplication.ViewModel
 
 		public async Task SaveData(ObservableCollection<QuestionPackViewModel> packs)
 		{
-			await FileReader.WriteFile(packs);
+			await FileReader.UpdateDb(packs);
 		}
 
 		public async Task ImportData()
@@ -215,7 +242,7 @@ namespace Labb03_QuizApplication.ViewModel
 		public void EditNewQuestionPack(object parameter)
 		{
             QuestionPack questionPack = new QuestionPack("My Question Pack");
-            NewQuestionPack = new QuestionPackViewModel(questionPack);
+			NewQuestionPack = new QuestionPackViewModel(questionPack) { Id = ObjectId.GenerateNewId() };
             ShowDialog.ShowCreatePackModelDialog();
         }
         public void AddQuestionPack(object parameter)
@@ -228,6 +255,7 @@ namespace Labb03_QuizApplication.ViewModel
 		public void DeleteQuestionPack(object parameter)
 		{
 			Packs.Remove(ActivePack);
+			FileReader.DeleteFromDb(ActivePack);
 			RaisePropertyChanged("Packs");
             DeleteQuestionPackCommand.RaiseCanExecuteChanged();
             ActivePack = Packs.FirstOrDefault();
@@ -240,23 +268,44 @@ namespace Labb03_QuizApplication.ViewModel
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
-        public async void SetConfigVis(object parameter)
+        public void SetConfigVis(object parameter)
         {
             PlayerViewModel.IsPlayerVisible = false;
             ConfigurationViewModel.IsConfigVisible = true;
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
+
+		public void AddCategory(object parameter)
+		{
+			QuestionPackCategories.Add(SelectedCategory);
+			FileReader.AddCategoryToDb(SelectedCategory);
+		}
+		public void RemoveCategory(object parameter)
+		{
+			FileReader.RemoveCategoryFromDb(SelectedCategory);
+			QuestionPackCategories.Remove(SelectedCategory);
+		}
 		public async void ExitWindowAsync(object? obj)
 		{
             await SaveData(Packs);
-			Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
 		}
 
 
 		public void ShowImportDialog(object parameter)
 		{
 			ShowDialog.ShowImportQuestionsDialog();
+		}
+		public void ShowAddCategoryDialog(object parameter)
+		{
+			SelectedCategory = new CategoryViewModel();
+			ShowDialog.ShowAddCategoryDialog();
+		}
+		public void ShowRemoveCategoryDialog(object Parameter)
+		{
+			SelectedCategory = QuestionPackCategories.FirstOrDefault();
+			ShowDialog.ShowRemoveCategoryDialog();
 		}
 
 		public void SetActivePack(object obj) => ActivePack = obj as QuestionPackViewModel;

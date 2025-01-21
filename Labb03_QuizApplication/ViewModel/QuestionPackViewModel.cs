@@ -1,4 +1,6 @@
 ﻿using Labb03_QuizApplication.Model;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +25,7 @@ namespace Labb03_QuizApplication.ViewModel
             this.Questions = new ObservableCollection<Question>(model.Questions);
         }
 
-        [JsonConstructor]
+        [BsonConstructor]
         public QuestionPackViewModel()
         {
             model = new QuestionPack() { Questions = [] };
@@ -31,6 +33,8 @@ namespace Labb03_QuizApplication.ViewModel
         }
 
         public ObservableCollection<Question> Questions { get; set; }
+
+        public ObjectId Id { get; set; }
         public string Name 
         {
             get => model.Name;
@@ -60,6 +64,16 @@ namespace Labb03_QuizApplication.ViewModel
                 RaisePropertyChanged();
             }
         }
+
+        private CategoryViewModel _category;
+
+        public CategoryViewModel Category
+        {
+            get { return _category; }
+            set { _category = value; RaisePropertyChanged(); }
+        }
+
+
 
         public override string ToString()
         {

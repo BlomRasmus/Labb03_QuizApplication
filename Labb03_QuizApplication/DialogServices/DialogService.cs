@@ -36,5 +36,19 @@ namespace Labb03_QuizApplication.DialogServices
 
             importStatusDialog.Show();
         }
+        
+        public void ShowAddCategoryDialog()
+        {
+            var addCategoryDialog = new AddCategoryDialog();
+
+            addCategoryDialog.Show();
+        }
+        
+        public void ShowRemoveCategoryDialog()
+        {
+            var removeCategoryDialog = new RemoveCategoryDialog();
+
+            removeCategoryDialog.Show();
+        }
     }
 }
