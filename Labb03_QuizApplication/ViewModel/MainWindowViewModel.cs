@@ -263,14 +263,26 @@ namespace Labb03_QuizApplication.ViewModel
 
 		public void SetPlayerVis(object parameter)
 		{
-			PlayerViewModel.IsPlayerVisible = true;
+			PlayerViewModel.IsBeginningOfQuiz = true;
 			ConfigurationViewModel.IsConfigVisible = false;
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
         public void SetConfigVis(object parameter)
         {
-            PlayerViewModel.IsPlayerVisible = false;
+			if (PlayerViewModel.IsPlayerVisible == true)
+			{
+				PlayerViewModel.IsPlayerVisible = false;
+			}
+			else if (PlayerViewModel.IsBeginningOfQuiz == true)
+			{
+				PlayerViewModel.IsBeginningOfQuiz = false;
+			}
+			else if (PlayerViewModel.IsEndOfQuiz == true)
+			{
+				PlayerViewModel.IsEndOfQuiz = false;
+			}
+
             ConfigurationViewModel.IsConfigVisible = true;
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();

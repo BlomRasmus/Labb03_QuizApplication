@@ -65,9 +65,8 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    
-    <Grid
-        Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="165"/>
             <RowDefinition Height="*"/>
@@ -75,17 +74,26 @@
             <RowDefinition Height="75"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0"
+        <StackPanel
+               Grid.Row="0"
                VerticalAlignment="Top"
                HorizontalAlignment="Right"
                Margin="10 0 20 0"
-               FontSize="40"
-               Content="{Binding TimeLeft}"
-               Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"/>
+               Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
+            
+            <Label Grid.Row="0"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Right"
+                   Margin="10 0 20 0"
+                   FontSize="40"
+                   Content="{Binding TimeLeft}"
+                   Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"/>
+        </StackPanel>
 
         <StackPanel
             VerticalAlignment="Bottom"
-            HorizontalAlignment="Center">
+            HorizontalAlignment="Center"
+            Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
 
 
             <TextBlock 
@@ -110,7 +118,8 @@
             Grid.Row="1"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-            Orientation="Horizontal">
+            Orientation="Horizontal"
+            Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
 
             <Button 
                 Margin="10"
@@ -123,7 +132,7 @@
                 Background="{Binding AnswerColors[0]}">
             </Button>
 
-                <Button 
+            <Button 
                 Margin="10"
                 Content="{Binding RandomizedAnswers[1]}"
                 Command="{Binding CheckAnswerCommand}"
@@ -139,7 +148,8 @@
             Grid.Row="2"
             VerticalAlignment="Top"
             HorizontalAlignment="Center"
-            Orientation="Horizontal">
+            Orientation="Horizontal"
+            Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
 
             <Button 
                 Margin="10"
@@ -163,37 +173,91 @@
 
         </StackPanel>
 
-        <Label Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
-               Grid.Row="0"
-               VerticalAlignment="Bottom"
-               HorizontalAlignment="Center"
-               FontSize="40"
-               FontWeight="Bold"
-               Content="QUIZ COMPLETED:"/>
-        <Label Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
-               Grid.Row="1"
-               VerticalAlignment="Top"
-               HorizontalAlignment="Center"
-               Content="{Binding EndMessage}"/>
-        <Button Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
-                Grid.Row="2"
-                VerticalAlignment="Top"
-                Width="75"
-                Height="30"
-                HorizontalAlignment="Center"
-                Command="{Binding StartPlayerViewCommand}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Retry"
-                           FontSize="15"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
-                <fa:IconImage Icon="Refresh"
-                              Width="15"
-                              Height="15"
-                              Margin="5 0 0 0 "/>
-            </StackPanel>
-        </Button>
+        <StackPanel
+            Grid.RowSpan="4"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+            
+            <Label Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Center"
+                   FontSize="40"
+                   FontWeight="Bold"
+                   Content="QUIZ COMPLETED:"/>
+            <Label Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Center"
+                   Content="{Binding EndMessage}"/>
+            <Label Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
+                   VerticalAlignment="Bottom"
+                   HorizontalAlignment="Center"
+                   Margin="0 10 0 0"
+                   FontSize="25"
+                   FontWeight="Bold"
+                   Content="SCOREBOARD:"/>
+            <ListView Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
+                     ItemsSource="{Binding FilteredUsers}"
+                     Background="White"
+                     >
+                
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" 
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                            <Label Content="Correct Answers:"
+                                   Margin="20 0 0 0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Score}"
+                                       VerticalAlignment="Center"/>
+                            <Label Content="Time:"
+                                   Margin="20 0 0 0"
+                                   VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Time}"
+                                       VerticalAlignment="Center"/>
+                            </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Visibility="{Binding IsEndOfQuiz, Converter={StaticResource PlayerVis}}"
+                    VerticalAlignment="Top"
+                    Width="75"
+                    Height="30"
+                    HorizontalAlignment="Center"
+                    Command="{Binding StartPlayerViewCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Retry"
+                               FontSize="15"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                    <fa:IconImage Icon="Refresh"
+                                  Width="15"
+                                  Height="15"
+                                  Margin="5 0 0 0 "/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
 
+        <StackPanel Width="200"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Grid.RowSpan="3"
+                    Visibility="{Binding IsBeginningOfQuiz, Converter={StaticResource PlayerVis}}">
+            <Label Content="Enter Username:"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Left"
+                   Margin="10"/>
+            <TextBox Margin="10"
+                     Height="30"
+                     Text="{Binding NewUserName, UpdateSourceTrigger=PropertyChanged}"
+                     />
+            <Button Content="Start"
+                    Width="30"
+                    Command="{Binding AddUserCommand}"/>
+
+        </StackPanel>
 
     </Grid>
 </UserControl>

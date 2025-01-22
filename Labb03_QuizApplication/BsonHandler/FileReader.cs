@@ -13,6 +13,8 @@ namespace Labb03_QuizApplication.JsonHandler
 
         public static ObservableCollection<QuestionPackViewModel> dbQuestionPack = new();
         public static ObservableCollection<CategoryViewModel> dbCategories = new();
+        public static List<UserViewModel> dbUsers = new();
+
 
 
         public static async Task<ObservableCollection<QuestionPackViewModel>> ReadFile(QuestionPackViewModel newQuestionPack)
@@ -69,6 +71,28 @@ namespace Labb03_QuizApplication.JsonHandler
         //        }
         //    }
         //}
+        public static async Task<List<UserViewModel>> LoadUsersAsync()
+        {
+            MongoClient client = new MongoClient(connectionString);
+            var bsonUserCollection = client.GetDatabase("RasmusBlom").GetCollection<UserViewModel>("Users");
+
+            if (bsonUserCollection != null)
+            {
+                var users = await bsonUserCollection.AsQueryable().ToListAsync();
+                return dbUsers = new List<UserViewModel>(users);
+            }
+            else
+            {
+                return dbUsers;
+            }
+        }
+        public static async Task SaveUser(UserViewModel newUser)
+        {
+            MongoClient client = new MongoClient(connectionString);
+            var bsonUserCollection = client.GetDatabase("RasmusBlom").GetCollection<UserViewModel>("Users");
+
+            await bsonUserCollection.InsertOneAsync(newUser);
+        }
         public static async Task DeleteFromDb(QuestionPackViewModel packToDelete)
         {
             MongoClient client = new MongoClient(connectionString);

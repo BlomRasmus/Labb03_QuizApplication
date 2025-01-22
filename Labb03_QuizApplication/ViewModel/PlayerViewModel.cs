@@ -1,8 +1,12 @@
 ﻿using Labb03_QuizApplication.Command;
+using Labb03_QuizApplication.JsonHandler;
 using Labb03_QuizApplication.Model;
+using MongoDB.Bson;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -27,6 +31,15 @@ namespace Labb03_QuizApplication.ViewModel
                 _makeWayForEndMessage = value;
                 RaisePropertyChanged();
             }
+        }
+
+
+        private bool _isBeginningOfQuiz;
+
+        public bool IsBeginningOfQuiz
+        {
+            get { return _isBeginningOfQuiz; }
+            set { _isBeginningOfQuiz = value; RaisePropertyChanged(); }
         }
 
 
@@ -79,6 +92,7 @@ namespace Labb03_QuizApplication.ViewModel
         }
 
 
+        List<UserViewModel> Users { get; set; }
         ObservableCollection<Question> RandomizedQuestions { get; set; }
 
         private ObservableCollection<string> _randomizedAnswers;
@@ -100,6 +114,15 @@ namespace Labb03_QuizApplication.ViewModel
             get { return _answerColors; }
             set { _answerColors = value; RaisePropertyChanged(); }
         }
+
+        private ObservableCollection<UserViewModel> _filteredUsers;
+
+        public ObservableCollection<UserViewModel> FilteredUsers
+        {
+            get { return _filteredUsers; }
+            set { _filteredUsers = value; RaisePropertyChanged(); }
+        }
+
 
 
         private int _timeLeft;
@@ -169,10 +192,29 @@ namespace Labb03_QuizApplication.ViewModel
             }
         }
 
+        private UserViewModel _activeUser;
+
+        public UserViewModel ActiveUser
+        {
+            get { return _activeUser; }
+            set { _activeUser = value; RaisePropertyChanged(); }
+        }
+
+        private string _newUserName;
+
+        public string NewUserName
+        {
+            get { return _newUserName; }
+            set { _newUserName = value; RaisePropertyChanged(); }
+        }
+
+
+
 
         public DelegateCommand UpdateButtonCommand { get; }
         public DelegateCommand CheckAnswerCommand { get; }
         public DelegateCommand StartPlayerViewCommand { get; }
+        public DelegateCommand AddUserCommand { get; }
 
 
 
@@ -190,8 +232,11 @@ namespace Labb03_QuizApplication.ViewModel
             HasAnswered = false;
             AnswerColors = new ObservableCollection<string> { "White", "White", "White", "White", };
 
+            GetUsers();
+
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
             StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
+            AddUserCommand = new DelegateCommand(AddUser);
 
             Timer = new DispatcherTimer();
             Timer.Interval = TimeSpan.FromSeconds(1);
@@ -199,7 +244,33 @@ namespace Labb03_QuizApplication.ViewModel
 
         }
 
+        public void EndQuiz()
+        {
+            EndMessage = $"You got {correctAnswers} right out of {RandomizedQuestions.Count}";
 
+            if(Users.Any(u => u != ActiveUser))
+            {
+                Users.Add(ActiveUser);
+                var filter = Users
+                    .Where(u => u.UserPack.Id == ActiveUser.UserPack.Id)
+                    .OrderByDescending(u => u.Score)
+                    .ThenBy(u => u.Time)
+                    .Take(5);
+
+                FilteredUsers = new ObservableCollection<UserViewModel>(filter);
+                RaisePropertyChanged("FilteredUsers");
+
+                FileReader.SaveUser(ActiveUser);
+            }
+
+            IsEndOfQuiz = true;
+        }
+        public async Task GetUsers()
+        {
+            Users = await FileReader.LoadUsersAsync();
+            RaisePropertyChanged("Users");
+        }
+        //TODO: gör så att när man trycker på RETRY knapp så får man skriva in nytt användarnamn och så skapas nytt namn
         public void StartPlayerView(object? obj)
         {
             IsEndOfQuiz = false;
@@ -220,6 +291,7 @@ namespace Labb03_QuizApplication.ViewModel
         private async void Timer_Tick(object? sender, EventArgs e)
         {
             TimeLeft--;
+            ActiveUser.Time++;
 
             if(TimeLeft < 1)
             {
@@ -255,6 +327,7 @@ namespace Labb03_QuizApplication.ViewModel
                 if (RandomizedAnswers[indexOfAnswer] == RandomizedAnswers[indexOfCorrectAnswer])
                 {
                     correctAnswers++;
+                    ActiveUser.Score++;
                     await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, true);
                 }
                 else
@@ -280,8 +353,7 @@ namespace Labb03_QuizApplication.ViewModel
             }
             else
             {
-                EndMessage = $"You got {correctAnswers} right out of {RandomizedQuestions.Count}";
-                IsEndOfQuiz = true;
+                EndQuiz();
             }
         }
 
@@ -303,6 +375,21 @@ namespace Labb03_QuizApplication.ViewModel
 
             }
 
+        }
+
+        public void AddUser(object parameter)
+        {
+            ActiveUser = new UserViewModel() 
+            { 
+                Name = NewUserName, 
+                UserPack = ActivePack, 
+                Score = 0, 
+                Time = 0, 
+                Id = ObjectId.GenerateNewId() 
+            };
+
+            IsBeginningOfQuiz = false;
+            IsPlayerVisible = true;
         }
 
     }
