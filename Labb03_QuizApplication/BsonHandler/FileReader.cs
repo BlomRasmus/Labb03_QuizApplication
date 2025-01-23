@@ -158,11 +158,28 @@ namespace Labb03_QuizApplication.JsonHandler
         public static async Task RemoveCategoryFromDb(CategoryViewModel category)
         {
             MongoClient client = new MongoClient(connectionString);
-            var BsonQuestionPack = client.GetDatabase("RasmusBlom").GetCollection<CategoryViewModel>("Category");
+            var BsonCategories = client.GetDatabase("RasmusBlom").GetCollection<CategoryViewModel>("Category");
 
             var filter = Builders<CategoryViewModel>.Filter.Eq(c => c.Id, category.Id);
 
-            await BsonQuestionPack.DeleteOneAsync(filter);
+            await BsonCategories.DeleteOneAsync(filter);
+        }
+
+        public static async Task AddAnswerToDb(AnswerViewModel answer)
+        {
+            MongoClient client = new MongoClient(connectionString);
+            var BsonAnswers = client.GetDatabase("RasmusBlom").GetCollection<AnswerViewModel>("Answers");
+
+            await BsonAnswers.InsertOneAsync(answer); 
+        }
+
+        public static async Task<List<AnswerViewModel>> GetAnswersAsync()
+        {
+            MongoClient client = new MongoClient(connectionString);
+            var BsonAnswers = client.GetDatabase("RasmusBlom").GetCollection<AnswerViewModel>("Answers");
+
+            var answers = await BsonAnswers.AsQueryable().ToListAsync();
+            return answers;
         }
     }
 }

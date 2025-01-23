@@ -93,6 +93,8 @@ namespace Labb03_QuizApplication.ViewModel
 
 
         List<UserViewModel> Users { get; set; }
+        List<AnswerViewModel> Answers { get; set; }
+        public ObservableCollection<int> AmountAnswered { get; set; }
         ObservableCollection<Question> RandomizedQuestions { get; set; }
 
         private ObservableCollection<string> _randomizedAnswers;
@@ -232,7 +234,7 @@ namespace Labb03_QuizApplication.ViewModel
             HasAnswered = false;
             AnswerColors = new ObservableCollection<string> { "White", "White", "White", "White", };
 
-            GetUsers();
+            GetUsersAndAnswers();
 
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
             StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
@@ -265,10 +267,11 @@ namespace Labb03_QuizApplication.ViewModel
 
             IsEndOfQuiz = true;
         }
-        public async Task GetUsers()
+        public async Task GetUsersAndAnswers()
         {
             Users = await FileReader.LoadUsersAsync();
             RaisePropertyChanged("Users");
+            Answers = await FileReader.GetAnswersAsync();
         }
         //TODO: gör så att när man trycker på RETRY knapp så får man skriva in nytt användarnamn och så skapas nytt namn
         public void StartPlayerView(object? obj)
@@ -287,6 +290,22 @@ namespace Labb03_QuizApplication.ViewModel
             RandomizedAnswers = new ObservableCollection<string>(currentQuestion.IncorrectAnswers);
             RandomizedAnswers.Add(currentQuestion.CorrectAnswer);
             RandomizedAnswers.Shuffle();
+
+            AmountAnswered = new ObservableCollection<int>();
+            RaisePropertyChanged("AmountAnswered");
+
+            foreach (string s in RandomizedAnswers)
+            {
+                try
+                {
+                    // TODO: Om man har två svar som är likadana på två olika frågor så kommer den att samla svaren på båda frågorna som ett, fixa detta.
+                    AmountAnswered.Add(Answers.Where(a => a.Answer == s && a.BelongingQuestionPack.Name == ActivePack.Name ).ToList().Count);
+                }
+                catch
+                {
+                    AmountAnswered.Add(0);
+                }
+            }
         }
         private async void Timer_Tick(object? sender, EventArgs e)
         {
@@ -319,6 +338,20 @@ namespace Labb03_QuizApplication.ViewModel
             int indexOfCorrectAnswer = RandomizedAnswers.IndexOf(ActiveQuestion.CorrectAnswer);
             Timer.Stop();
 
+            //AmountAnswered = new ObservableCollection<int>();
+            //RaisePropertyChanged("AmountAnswered");
+
+            //foreach (string s in RandomizedAnswers)
+            //{
+            //    try
+            //    {
+            //        AmountAnswered.Add(Answers.Where(a => a.Answer == s && a.BelongingQuestionPack.Name == ActivePack.Name).ToList().Count);
+            //    }
+            //    catch
+            //    {
+            //        AmountAnswered.Add(0);
+            //    }
+            //}
 
             if (HasAnswered == false)
             {
@@ -334,6 +367,14 @@ namespace Labb03_QuizApplication.ViewModel
                 {
                     await SetAnswersColor(indexOfCorrectAnswer, indexOfAnswer, false);
                 }
+
+                var newAnswer = new AnswerViewModel()
+                {
+                    Answer = RandomizedAnswers.ElementAt(indexOfAnswer),
+                    Id = ObjectId.GenerateNewId(),
+                    BelongingQuestionPack = ActivePack
+                };
+                FileReader.AddAnswerToDb(newAnswer);
 
                 SetNewQuestion();
                 HasAnswered = false;

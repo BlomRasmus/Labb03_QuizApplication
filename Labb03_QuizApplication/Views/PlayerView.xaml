@@ -121,6 +121,8 @@
             Orientation="Horizontal"
             Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
 
+            <TextBlock Text="{Binding AmountAnswered[0]}"/>
+
             <Button 
                 Margin="10"
                 Content="{Binding RandomizedAnswers[0]}"
@@ -142,6 +144,8 @@
                 Width="150"
                 Background="{Binding AnswerColors[1]}"/>
 
+            <TextBlock Text="{Binding AmountAnswered[1]}"/>
+
         </StackPanel>
 
         <StackPanel
@@ -150,6 +154,8 @@
             HorizontalAlignment="Center"
             Orientation="Horizontal"
             Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
+
+            <TextBlock Text="{Binding AmountAnswered[2]}"/>
 
             <Button 
                 Margin="10"
@@ -170,6 +176,8 @@
                 Height="75"
                 Width="150"
                 Background="{Binding AnswerColors[3]}"/>
+
+            <TextBlock Text="{Binding AmountAnswered[3]}"/>
 
         </StackPanel>
 
