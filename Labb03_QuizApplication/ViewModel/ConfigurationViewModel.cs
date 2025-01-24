@@ -91,7 +91,7 @@ namespace Labb03_QuizApplication.ViewModel
             RaisePropertyChanged("ActivePack");
 
             if(ActivePack.Questions.Any()) mainWindowViewModel.SetPlayerVisCommand.RaiseCanExecuteChanged();
-            FileReader.UpdateDb(ActivePack);
+            FileReader.UpdateDbAsync(ActivePack);
         }
 
         public void ShowDialog()
@@ -100,7 +100,7 @@ namespace Labb03_QuizApplication.ViewModel
         }
         public void UpdatePackOptions(object obj)
         {
-            FileReader.UpdateDb(ActivePack);
+            FileReader.UpdateDbAsync(ActivePack);
         }
 
     }

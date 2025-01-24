@@ -53,9 +53,11 @@
                           Command="{Binding ShowImportQuestionsDialogCommand}"/>
                 <Separator />
                 <MenuItem Header="Add Category"
-                          Command="{Binding ShowAddCategoryDialogCommand}"/>
+                          Command="{Binding ShowAddCategoryDialogCommand}"
+                          Icon="{fa:Icon SquarePlus}"/>
                 <MenuItem Header="Remove Category"
-                          Command="{Binding ShowRemoveCategoryDialogCommand}"/>
+                          Command="{Binding ShowRemoveCategoryDialogCommand}"
+                          Icon="{fa:Icon SquareMinus}"/>
                 <Separator/>
                 <MenuItem Header="E_xit"
                           InputGestureText="Alt + F4"

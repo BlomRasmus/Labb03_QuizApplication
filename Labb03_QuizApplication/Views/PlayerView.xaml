@@ -121,30 +121,55 @@
             Orientation="Horizontal"
             Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
 
-            <TextBlock Text="{Binding AmountAnswered[0]}"/>
 
             <Button 
                 Margin="10"
-                Content="{Binding RandomizedAnswers[0]}"
                 Command="{Binding CheckAnswerCommand}"
                 CommandParameter="0"
                 Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"
                 Height="75"
                 Width="150"
                 Background="{Binding AnswerColors[0]}">
+                <StackPanel>
+                    <TextBlock Text="{Binding RandomizedAnswers[0]}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="0 10 0 0">
+                        <TextBlock Text="Previous Answers: "
+                                   Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                        <TextBlock Text="{Binding AmountAnswered[0]}" 
+                                Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                    </StackPanel>
+                </StackPanel>
             </Button>
 
             <Button 
                 Margin="10"
-                Content="{Binding RandomizedAnswers[1]}"
                 Command="{Binding CheckAnswerCommand}"
                 CommandParameter="1"
                 Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"
                 Height="75"
                 Width="150"
-                Background="{Binding AnswerColors[1]}"/>
+                Background="{Binding AnswerColors[1]}">
+                <StackPanel>
+                    <TextBlock Text="{Binding RandomizedAnswers[1]}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="0 10 0 0">
+                        <TextBlock Text="Previous Answers: "
+                                   Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                        <TextBlock Text="{Binding AmountAnswered[1]}" 
+                                Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
 
-            <TextBlock Text="{Binding AmountAnswered[1]}"/>
 
         </StackPanel>
 
@@ -155,29 +180,54 @@
             Orientation="Horizontal"
             Visibility="{Binding IsPlayerVisible, Converter={StaticResource PlayerVis}}">
 
-            <TextBlock Text="{Binding AmountAnswered[2]}"/>
 
             <Button 
                 Margin="10"
-                Content="{Binding RandomizedAnswers[2]}"
                 Command="{Binding CheckAnswerCommand}"
                 CommandParameter="2"
                 Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"
                 Height="75"
                 Width="150"
-                Background="{Binding AnswerColors[2]}"/>
+                Background="{Binding AnswerColors[2]}">
+                <StackPanel>
+                    <TextBlock Text="{Binding RandomizedAnswers[2]}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="0 10 0 0">
+                        <TextBlock Text="Previous Answers: "
+                                   Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                        <TextBlock Text="{Binding AmountAnswered[2]}" 
+                                Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
 
             <Button 
                 Margin="10"
-                Content="{Binding RandomizedAnswers[3]}"
                 Command="{Binding CheckAnswerCommand}"
                 CommandParameter="3"
                 Visibility="{Binding MakeWayForEndMessage, Converter={StaticResource PlayerVis}}"
                 Height="75"
                 Width="150"
-                Background="{Binding AnswerColors[3]}"/>
-
-            <TextBlock Text="{Binding AmountAnswered[3]}"/>
+                Background="{Binding AnswerColors[3]}">
+                <StackPanel>
+                    <TextBlock Text="{Binding RandomizedAnswers[3]}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="0 10 0 0">
+                        <TextBlock Text="Previous Answers: "
+                                   Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                        <TextBlock Text="{Binding AmountAnswered[3]}" 
+                                Visibility="{Binding HasAnswered, Converter={StaticResource PlayerVis}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
 
         </StackPanel>
 
@@ -234,7 +284,7 @@
                     Width="75"
                     Height="30"
                     HorizontalAlignment="Center"
-                    Command="{Binding StartPlayerViewCommand}">
+                    Command="{Binding RestartQuizCommand}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Retry"
                                FontSize="15"

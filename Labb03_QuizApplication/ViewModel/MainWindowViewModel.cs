@@ -186,7 +186,7 @@ namespace Labb03_QuizApplication.ViewModel
 
 		public async Task LoadData(QuestionPackViewModel newQuestionPack)
 		{
-			Packs = await FileReader.ReadFile(newQuestionPack);
+			Packs = await FileReader.GetQuestionPacksFromDbAsync(newQuestionPack);
 			QuestionPackCategories = await FileReader.LoadCategoriesAsync();
 			RaisePropertyChanged("Packs");
 
@@ -202,7 +202,7 @@ namespace Labb03_QuizApplication.ViewModel
 
 		public async Task SaveData(ObservableCollection<QuestionPackViewModel> packs)
 		{
-			await FileReader.UpdateDb(packs);
+			await FileReader.UpdateDbAsync(packs);
 		}
 
 		public async Task ImportData()
@@ -237,6 +237,7 @@ namespace Labb03_QuizApplication.ViewModel
                 StatusReport = TriviaHandler.ShowImportStatus(importedData.response_code);
             }
 
+			SetConfigVis(null);
 			ShowDialog.ShowImportStatusDialog();
         }
 		public void EditNewQuestionPack(object parameter)
@@ -250,15 +251,17 @@ namespace Labb03_QuizApplication.ViewModel
 			Packs.Add(NewQuestionPack);
 			DeleteQuestionPackCommand.RaiseCanExecuteChanged();
             ActivePack = NewQuestionPack;
+			SetConfigVis(null);
             RaisePropertyChanged();
 		}
 		public void DeleteQuestionPack(object parameter)
 		{
 			Packs.Remove(ActivePack);
-			FileReader.DeleteFromDb(ActivePack);
+			FileReader.DeleteFromDbAsync(ActivePack);
 			RaisePropertyChanged("Packs");
             DeleteQuestionPackCommand.RaiseCanExecuteChanged();
             ActivePack = Packs.FirstOrDefault();
+			SetConfigVis(null);
 		}
 
 		public void SetPlayerVis(object parameter)
@@ -268,12 +271,13 @@ namespace Labb03_QuizApplication.ViewModel
             SetConfigVisCommand.RaiseCanExecuteChanged();
             SetPlayerVisCommand.RaiseCanExecuteChanged();
         }
-        public void SetConfigVis(object parameter)
+        public void SetConfigVis(object? parameter)
         {
 			if (PlayerViewModel.IsPlayerVisible == true)
 			{
 				PlayerViewModel.IsPlayerVisible = false;
-			}
+                PlayerViewModel.IsEndOfQuiz = false;
+            }
 			else if (PlayerViewModel.IsBeginningOfQuiz == true)
 			{
 				PlayerViewModel.IsBeginningOfQuiz = false;
@@ -291,11 +295,11 @@ namespace Labb03_QuizApplication.ViewModel
 		public void AddCategory(object parameter)
 		{
 			QuestionPackCategories.Add(SelectedCategory);
-			FileReader.AddCategoryToDb(SelectedCategory);
+			FileReader.AddCategoryToDbAsync(SelectedCategory);
 		}
 		public void RemoveCategory(object parameter)
 		{
-			FileReader.RemoveCategoryFromDb(SelectedCategory);
+			FileReader.RemoveCategoryFromDbAsync(SelectedCategory);
 			QuestionPackCategories.Remove(SelectedCategory);
 		}
 		public async void ExitWindowAsync(object? obj)
@@ -320,7 +324,10 @@ namespace Labb03_QuizApplication.ViewModel
 			ShowDialog.ShowRemoveCategoryDialog();
 		}
 
-		public void SetActivePack(object obj) => ActivePack = obj as QuestionPackViewModel;
-
+		public void SetActivePack(object obj)
+		{
+			ActivePack = obj as QuestionPackViewModel;
+			SetConfigVis(null);
+		}
     }
 }

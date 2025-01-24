@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Labb03_QuizApplication.Model;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace Labb03_QuizApplication.ViewModel
         public ObjectId Id { get; set; }
         public string Answer { get; set; }
         public QuestionPackViewModel BelongingQuestionPack { get; set; }
+        public Question BelongingQuestion { get; set; }
     }
 }

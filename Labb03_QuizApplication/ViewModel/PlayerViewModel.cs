@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Threading;
 
 namespace Labb03_QuizApplication.ViewModel
@@ -217,6 +218,7 @@ namespace Labb03_QuizApplication.ViewModel
         public DelegateCommand CheckAnswerCommand { get; }
         public DelegateCommand StartPlayerViewCommand { get; }
         public DelegateCommand AddUserCommand { get; }
+        public DelegateCommand RestartQuizCommand { get; }
 
 
 
@@ -234,11 +236,12 @@ namespace Labb03_QuizApplication.ViewModel
             HasAnswered = false;
             AnswerColors = new ObservableCollection<string> { "White", "White", "White", "White", };
 
-            GetUsersAndAnswers();
+            GetUsersAsync();
 
             CheckAnswerCommand = new DelegateCommand(CheckAnswer);
             StartPlayerViewCommand = new DelegateCommand(StartPlayerView);
             AddUserCommand = new DelegateCommand(AddUser);
+            RestartQuizCommand = new DelegateCommand(RestartQuiz);
 
             Timer = new DispatcherTimer();
             Timer.Interval = TimeSpan.FromSeconds(1);
@@ -250,8 +253,6 @@ namespace Labb03_QuizApplication.ViewModel
         {
             EndMessage = $"You got {correctAnswers} right out of {RandomizedQuestions.Count}";
 
-            if(Users.Any(u => u != ActiveUser))
-            {
                 Users.Add(ActiveUser);
                 var filter = Users
                     .Where(u => u.UserPack.Id == ActiveUser.UserPack.Id)
@@ -262,21 +263,24 @@ namespace Labb03_QuizApplication.ViewModel
                 FilteredUsers = new ObservableCollection<UserViewModel>(filter);
                 RaisePropertyChanged("FilteredUsers");
 
-                FileReader.SaveUser(ActiveUser);
-            }
+                FileReader.SaveUserAsync(ActiveUser);
+            GetAnswersAsync();
 
             IsEndOfQuiz = true;
         }
-        public async Task GetUsersAndAnswers()
+        public async Task GetUsersAsync()
         {
             Users = await FileReader.LoadUsersAsync();
             RaisePropertyChanged("Users");
-            Answers = await FileReader.GetAnswersAsync();
         }
-        //TODO: gör så att när man trycker på RETRY knapp så får man skriva in nytt användarnamn och så skapas nytt namn
+        public async Task GetAnswersAsync()
+        {
+            Answers = await FileReader.GetAnswersAsync();
+            RaisePropertyChanged("Answers");
+        }
+
         public void StartPlayerView(object? obj)
         {
-            IsEndOfQuiz = false;
             correctAnswers = 0;
             currentQuestionIndex = 0;
             RandomizedQuestions = ActivePack.Questions;
@@ -284,6 +288,12 @@ namespace Labb03_QuizApplication.ViewModel
             ActiveQuestion = RandomizedQuestions[currentQuestionIndex];
             RandomizeAnswers(ActiveQuestion);
             StartTimer();
+        }
+        public void RestartQuiz(object obj)
+        {
+            IsEndOfQuiz = false;
+            IsPlayerVisible = false;
+            IsBeginningOfQuiz = true;
         }
         public void RandomizeAnswers(Question currentQuestion)
         {
@@ -299,7 +309,9 @@ namespace Labb03_QuizApplication.ViewModel
                 try
                 {
                     // TODO: Om man har två svar som är likadana på två olika frågor så kommer den att samla svaren på båda frågorna som ett, fixa detta.
-                    AmountAnswered.Add(Answers.Where(a => a.Answer == s && a.BelongingQuestionPack.Name == ActivePack.Name ).ToList().Count);
+                    AmountAnswered
+                        .Add(Answers.Where(a => a.Answer == s && a.BelongingQuestionPack.Name == ActivePack.Name && a.BelongingQuestion.Query == currentQuestion.Query)
+                        .ToList().Count);
                 }
                 catch
                 {
@@ -372,9 +384,10 @@ namespace Labb03_QuizApplication.ViewModel
                 {
                     Answer = RandomizedAnswers.ElementAt(indexOfAnswer),
                     Id = ObjectId.GenerateNewId(),
-                    BelongingQuestionPack = ActivePack
+                    BelongingQuestionPack = ActivePack,
+                    BelongingQuestion = ActiveQuestion
                 };
-                FileReader.AddAnswerToDb(newAnswer);
+                FileReader.AddAnswerToDbAsync(newAnswer);
 
                 SetNewQuestion();
                 HasAnswered = false;

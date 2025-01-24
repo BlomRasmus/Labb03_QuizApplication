@@ -17,7 +17,7 @@ namespace Labb03_QuizApplication.JsonHandler
 
 
 
-        public static async Task<ObservableCollection<QuestionPackViewModel>> ReadFile(QuestionPackViewModel newQuestionPack)
+        public static async Task<ObservableCollection<QuestionPackViewModel>> GetQuestionPacksFromDbAsync(QuestionPackViewModel newQuestionPack)
         {
             MongoClient client = new MongoClient(connectionString);
             try
@@ -49,28 +49,6 @@ namespace Labb03_QuizApplication.JsonHandler
 
             return dbCategories = new ObservableCollection<CategoryViewModel>(categories);
         }
-
-
-        //public static async Task WriteFile(ObservableCollection<QuestionPackViewModel> questionPacks)
-        //{
-        //    MongoClient client = new MongoClient(connectionString);
-        //    var BsonQuestionPack = client.GetDatabase("RasmusBlom").GetCollection<QuestionPackViewModel>("QuestionPack");
-        //    var dbPacks = await BsonQuestionPack.AsQueryable().ToListAsync();
-
-        //    var itemsToKeep = questionPacks.Where(x => dbPacks.All(y => y.Id != x.Id));
-
-        //    if(itemsToKeep.Count() > 0)
-        //    {
-        //        try
-        //        {
-        //            await BsonQuestionPack.InsertManyAsync(itemsToKeep);
-        //        }
-        //        catch
-        //        {
-        //            throw new FileLoadException("Cant save");
-        //        }
-        //    }
-        //}
         public static async Task<List<UserViewModel>> LoadUsersAsync()
         {
             MongoClient client = new MongoClient(connectionString);
@@ -86,14 +64,14 @@ namespace Labb03_QuizApplication.JsonHandler
                 return dbUsers;
             }
         }
-        public static async Task SaveUser(UserViewModel newUser)
+        public static async Task SaveUserAsync(UserViewModel newUser)
         {
             MongoClient client = new MongoClient(connectionString);
             var bsonUserCollection = client.GetDatabase("RasmusBlom").GetCollection<UserViewModel>("Users");
 
             await bsonUserCollection.InsertOneAsync(newUser);
         }
-        public static async Task DeleteFromDb(QuestionPackViewModel packToDelete)
+        public static async Task DeleteFromDbAsync(QuestionPackViewModel packToDelete)
         {
             MongoClient client = new MongoClient(connectionString);
             var BsonQuestionPack = client.GetDatabase("RasmusBlom").GetCollection<QuestionPackViewModel>("QuestionPack");
@@ -105,7 +83,7 @@ namespace Labb03_QuizApplication.JsonHandler
                 await BsonQuestionPack.DeleteOneAsync(filter);
             }
         }
-        public static async Task UpdateDb(QuestionPackViewModel packToUpdate)
+        public static async Task UpdateDbAsync(QuestionPackViewModel packToUpdate)
         {
             MongoClient client = new MongoClient(connectionString);
             var BsonQuestionPack = client.GetDatabase("RasmusBlom").GetCollection<QuestionPackViewModel>("QuestionPack");
@@ -120,7 +98,7 @@ namespace Labb03_QuizApplication.JsonHandler
 
             await BsonQuestionPack.UpdateOneAsync(filter, update);
         }
-        public static async Task UpdateDb(ObservableCollection<QuestionPackViewModel> collectionToUpdate)
+        public static async Task UpdateDbAsync(ObservableCollection<QuestionPackViewModel> collectionToUpdate)
         {
             MongoClient client = new MongoClient(connectionString);
             var BsonQuestionPack = client.GetDatabase("RasmusBlom").GetCollection<QuestionPackViewModel>("QuestionPack");
@@ -145,7 +123,7 @@ namespace Labb03_QuizApplication.JsonHandler
                 await BsonQuestionPack.BulkWriteAsync(bulkOps);
             }
         }
-        public static async Task AddCategoryToDb(CategoryViewModel category)
+        public static async Task AddCategoryToDbAsync(CategoryViewModel category)
         {
             MongoClient client = new MongoClient(connectionString);
             var BsonQuestionPack = client.GetDatabase("RasmusBlom").GetCollection<CategoryViewModel>("Category");
@@ -155,7 +133,7 @@ namespace Labb03_QuizApplication.JsonHandler
                 await BsonQuestionPack.InsertOneAsync(category);
             }
         }
-        public static async Task RemoveCategoryFromDb(CategoryViewModel category)
+        public static async Task RemoveCategoryFromDbAsync(CategoryViewModel category)
         {
             MongoClient client = new MongoClient(connectionString);
             var BsonCategories = client.GetDatabase("RasmusBlom").GetCollection<CategoryViewModel>("Category");
@@ -165,7 +143,7 @@ namespace Labb03_QuizApplication.JsonHandler
             await BsonCategories.DeleteOneAsync(filter);
         }
 
-        public static async Task AddAnswerToDb(AnswerViewModel answer)
+        public static async Task AddAnswerToDbAsync(AnswerViewModel answer)
         {
             MongoClient client = new MongoClient(connectionString);
             var BsonAnswers = client.GetDatabase("RasmusBlom").GetCollection<AnswerViewModel>("Answers");
