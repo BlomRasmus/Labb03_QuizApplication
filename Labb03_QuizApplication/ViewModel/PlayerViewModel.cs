@@ -308,7 +308,6 @@ namespace Labb03_QuizApplication.ViewModel
             {
                 try
                 {
-                    // TODO: Om man har två svar som är likadana på två olika frågor så kommer den att samla svaren på båda frågorna som ett, fixa detta.
                     AmountAnswered
                         .Add(Answers.Where(a => a.Answer == s && a.BelongingQuestionPack.Name == ActivePack.Name && a.BelongingQuestion.Query == currentQuestion.Query)
                         .ToList().Count);
@@ -349,21 +348,6 @@ namespace Labb03_QuizApplication.ViewModel
             int indexOfAnswer = Int32.Parse((string)buttonAnswer);
             int indexOfCorrectAnswer = RandomizedAnswers.IndexOf(ActiveQuestion.CorrectAnswer);
             Timer.Stop();
-
-            //AmountAnswered = new ObservableCollection<int>();
-            //RaisePropertyChanged("AmountAnswered");
-
-            //foreach (string s in RandomizedAnswers)
-            //{
-            //    try
-            //    {
-            //        AmountAnswered.Add(Answers.Where(a => a.Answer == s && a.BelongingQuestionPack.Name == ActivePack.Name).ToList().Count);
-            //    }
-            //    catch
-            //    {
-            //        AmountAnswered.Add(0);
-            //    }
-            //}
 
             if (HasAnswered == false)
             {
